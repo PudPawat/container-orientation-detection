@@ -16,6 +16,11 @@ compareimg.py is the main.py to run the classification and orientation
 ```
 ### Set class in the dataset/class_registeration 
 
+set the name of an image 
+- name_somthing.jpg --->
+things before undersocre is name of the class
+
+![alt text](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/classification_data_set.PNG?raw=true)
 
 ## notch_config.json
 - Type some Markdown on the left
@@ -24,6 +29,7 @@ compareimg.py is the main.py to run the classification and orientation
 
 ```sh{
   "params": {"HSV": [0, 0, 70, 180, 255, 255], "erode": [4, 0], "dilate": [4, 0]}, ## HSV and other img_processign parameter (change only HSV is enough)
+  ### ""HSV: [low_h,low_s, low_v,high_h,high_s, high_v]
   "debug": "False",
   "show_result": "False",
   "flag_rotate": "None",
@@ -49,3 +55,10 @@ compareimg.py is the main.py to run the classification and orientation
 ```
 
 ### set HSV 
+#GOOD
+![alt text](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/Good_HSV_setting.PNG?raw=true)
+
+#BAD
+![alt text](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/BAD_HSV_SETTING_1.PNG?raw=true)
+
+![alt text](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/BAD_HSV_SETTING_2.PNG?raw=true)
