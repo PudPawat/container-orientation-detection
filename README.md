@@ -15,7 +15,7 @@ pip3 install -r requiremtnt.txt
 ## APPLICATION AND EXPLAINATION 
 this code is to classification compareimg.py by easily using by put a reference images into a folder
 
-![alt text](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/EX_1.PNG?raw=true)
+![alt text](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/EX1.PNG?raw=true)
 
 
 and the class has notch can the detect angle of the object
