@@ -1,0 +1,6 @@
+{
+  "folder_ref": "dataset\\class_registeration",
+  "debug": "True",
+  "crop_circle_platform": [546.1550518881522, 421.04824877486305, 375],
+  "resize_ratio": 0.3
+}

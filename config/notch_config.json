@@ -2,6 +2,7 @@
   "params": {"HSV": [0, 0, 70, 180, 255, 255], "erode": [4, 0], "dilate": [4, 0]},
   "debug": "False",
   "show_result": "True",
+  "flag_rotate": "None",
   "resize_ratio": 0.3,
   "crop_circle_fix_r": [546.1550518881522, 421.04824877486305, 255],
   "crop_circle_platform": [546.1550518881522, 421.04824877486305, 375],
