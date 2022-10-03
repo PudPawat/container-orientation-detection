@@ -10,8 +10,11 @@ import pandas as pd
 
 from scipy.spatial import distance
 import time
-from compare_image_remove_background import OrientationDetection
-from lib.warp_and_reverse_warp import warp_polar, reverse_warp
+from detect_notch import OrientationDetection
+try:
+    from lib.warp_and_reverse_warp import warp_polar, reverse_warp
+except:
+    from .lib.warp_and_reverse_warp import warp_polar, reverse_warp
 
 import json
 from easydict import EasyDict
