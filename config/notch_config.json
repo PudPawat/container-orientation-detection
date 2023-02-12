@@ -1,6 +1,6 @@
 {
   "params": {"HSV": [0, 0, 70, 180, 255, 255], "erode": [4, 0], "dilate": [4, 0]},
-  "debug": "False",
+  "debug": "True",
   "show_result": "True",
   "flag_rotate": "None",
   "resize_ratio": 0.3,
@@ -16,7 +16,7 @@
   },
   "object": {
     "object_contour_area_min": 2000,
-    "object_contour_area_max": 200000,
+    "object_contour_area_max": 2000000,
     "object_contour_distance_criterion": 50,
     "circle_radius_minus_safety": 10
   }

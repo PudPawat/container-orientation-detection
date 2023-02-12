@@ -113,6 +113,24 @@ class FeatureVisualization():
             self.pretrained_model.to(torch.device("cuda:0"))
             self.pretrained_model2.to(torch.device("cuda:0"))
 
+        self.get_imgs_in_ref_score()
+
+    def get_imgs_in_ref_score(self):
+        names_result = {}
+        for j in range(len(self.names_ref)):
+            img2 = cv2.imread(os.path.join(self.opt.folder_ref, self.names_ref[j]))
+            print("0")
+            # imgasvar = featureVis.preprocess_image(img2)
+            self.set_index(j)
+            outputs2 = self.get_fc_feature(img2)
+            self.plot_probablity(outputs2)
+
+            names_result[self.names_ref[j]] = outputs2
+
+        self.names_result = names_result
+
+        return names_result
+
     # @staticmethod
     def preprocess_image(self, cv2im, resize_im=True):
 
@@ -199,22 +217,35 @@ class FeatureVisualization():
         if self.debug:
             cv2.putText(img1, "INPUT", (0, img1.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 3, (200, 200, 0), 3)
             cv2.imshow("1", img1)
-        # imgasvar = featureVis.preprocess_image(img1)
-        outputs1 = featureVis.get_fc_feature(img1)
-        featureVis.plot_probablity(outputs1)
-
-        for j in range(len(self.names_ref)):
-            img2 = cv2.imread(os.path.join(self.opt.folder_ref, self.names_ref[j]))
-
-            # imgasvar = featureVis.preprocess_image(img2)
-            featureVis.set_index(j)
-            outputs2 = featureVis.get_fc_feature(img2)
-            featureVis.plot_probablity(outputs2)
-
-            dis = featureVis.compare_cosine(outputs1, outputs2)
-            cv2.waitKey(1)
-
+        # imgasvar = self.preprocess_image(img1)
+        outputs1 = self.get_fc_feature(img1)
+        print("outputs1", outputs1)
+        self.plot_probablity(outputs1)
+        print("outputs1", outputs1)
+        result = []
+        for j, name in enumerate(self.names_result.keys()):
+            dis = featureVis.compare_cosine(outputs1, self.names_result[name])
             result.append(dis[0])
+
+
+        # # --- old core before optimize ---
+        # for j in range(len(self.names_ref)):
+        #     img2 = cv2.imread(os.path.join(self.opt.folder_ref, self.names_ref[j]))
+        #
+        #     # imgasvar = self.preprocess_image(img2)
+        #     self.set_index(j)
+        #     t0 = time.time()
+        #     outputs2 = self.get_fc_feature(img2)
+        #     print("get_fc_feature", time.time() - t0)
+        #
+        #     t1 = time.time()
+        #     self.plot_probablity(outputs2)
+        #
+        #     dis = featureVis.compare_cosine(outputs1, outputs2)
+        #     print("compare_cosine", time.time() - t1)
+        #     cv2.waitKey(1)
+        #
+        #     result.append(dis[0])
 
         result_array = np.asarray(result)
         ind = np.argmin(result_array)
@@ -233,8 +264,9 @@ class FeatureVisualization():
 
 if __name__ == '__main__':
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\Darker - Exposure time 120000us close some ambient light"
+    folder = "dataset\class_registeration"
     folder_ref = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\\light2_class"
-    folder_ref = "F:\Pawat\Projects\container-orientation-detection\dataset\class_registeration"
+    folder_ref = "dataset\class_registeration"
 
     names = os.listdir(folder)
     names_ref = os.listdir(folder_ref)

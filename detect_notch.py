@@ -160,6 +160,13 @@ class OrientationDetection():
             _, contours = cv2.findContours(diff_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         except:
             _, contours, _ = cv2.findContours(diff_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        print("contours",contours)
+        # right_mask = np.zeros(diff_img.shape[:2], dtype="uint8")
+        # # for contour in right_contours:
+        # #     right_mask = cv2.drawContours(right_mask,[contour],-1,(255,255,255),10)
+        # right_mask = cv2.drawContours(right_mask, contours, -1, (255, 255, 255), -1)
+        # cv2.imshow("right_mask",right_mask)
         # for contour in contours:
         #     area = cv2.contourArea(contour)
         # right_contours, draw_img = contour_center_distance(diff_img, img2_copy, (crop_circle[0],crop_circle[1]),dis_criterion= 100 )
@@ -170,7 +177,9 @@ class OrientationDetection():
                                             ,(self.img2_process.shape[1] / 2, self.img2_process.shape[0] / 2)
                                             , self.object_contour_distance_criterion)
         # right_contours = contour_min_or_max(right_contours,mode= "max")
+        print(right_contours)
         self.right_contours = right_contours
+
         # right_contours, draw_img = contour_center_distance_by_img(diff_img, img2_copy,(img2_copy.shape[1]/2,img2_copy.shape[0]/2),30)
         if self.debug:
             cv2.imshow("img2_process",self.img2_process)
@@ -379,7 +388,8 @@ if __name__ == '__main__':
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\Exposure time 120000us 30degree"
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\Brighter - Exposure time 120000us only lifht source"
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\Darker - Exposure time 120000us close some ambient light"
-    # folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\120000_test_0930"
+    folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\120000_test_0930"
+    folder = "F:\Ph.D\circle_classification\Containers_0930-20221224T055211Z-001\Containers_0930\Brighter - Exposure time 120000us only lifht source"
     # folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\60000_test"
     # folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\Exposure time 200000us"
 
