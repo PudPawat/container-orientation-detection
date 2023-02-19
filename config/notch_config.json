@@ -1,11 +1,13 @@
 {
-  "params": {"HSV": [0, 0, 70, 180, 255, 255], "erode": [4, 0], "dilate": [4, 0]},
-  "debug": "True",
+  "params1": {"HSV": [0, 0, 70, 180, 255, 255], "erode": [4, 0], "dilate": [4, 0]},
+  "params": {"HSV": [0, 0, 50, 180, 255, 255], "dilate": [5, 0], "erode": [9, 0]},
+  "debug": "False",
+  "save_img": "False",
   "show_result": "True",
   "flag_rotate": "None",
   "resize_ratio": 0.3,
-  "crop_circle_fix_r": [546.1550518881522, 421.04824877486305, 255],
-  "crop_circle_platform": [546.1550518881522, 421.04824877486305, 375],
+  "crop_circle_fix_r": [537, 403, 255],
+  "crop_circle_platform": [537, 403, 375],
   "threshold_score": 100,
   "text_color": [255,255,0],
   "notch": {

@@ -33,6 +33,8 @@ class OrientationDetection():
 
         self.params = self.opt.params
         self.debug =  self.opt.debug.lower() in ("yes", "true", "t", "1")
+        self.save_img = self.opt.save_img.lower() in ("yes", "true", "t", "1")
+        self.process_order = 0
         self.show_result = self.opt.show_result.lower() in ("yes", "true", "t", "1")
         self.flag_rotate = self.opt.flag_rotate
 
@@ -133,6 +135,9 @@ class OrientationDetection():
             # diff_img = cv2.bitwise_or(img2,img1,mask= img1)
             if self.debug:
                 cv2.imshow("diff_img", diff_img)
+                if self.save_img:
+                    cv2.imwrite("debug_imgs/{}diff_img.jpg".format(self.process_order),diff_img)
+                    self.process_order+=1
 
 # diff_img = img2
 
@@ -145,6 +150,11 @@ class OrientationDetection():
             cv2.imshow("img2",img2)
             cv2.imshow("img1",img1)
             cv2.imshow("diff", diff_img)
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}img2.jpg".format(self.process_order), img2)
+                cv2.imwrite("debug_imgs/{}img1.jpg".format(self.process_order), img1)
+                cv2.imwrite("debug_imgs/{}diff_img.jpg".format(self.process_order), diff_img)
+                self.process_order += 1
             cv2.waitKey(0)
 
         self.diff_img = diff_img
@@ -184,6 +194,11 @@ class OrientationDetection():
         if self.debug:
             cv2.imshow("img2_process",self.img2_process)
             cv2.imshow("img1_process",self.img1_process)
+
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}img2_process.jpg".format(self.process_order), self.img2_process)
+                cv2.imwrite("debug_imgs/{}img1_process.jpg".format(self.process_order), self.img1_process)
+                self.process_order += 1
             print("right_contours of remove background",len(right_contours))
         right_mask = np.zeros(diff_img.shape[:2], dtype="uint8")
         # for contour in right_contours:
@@ -192,6 +207,9 @@ class OrientationDetection():
         self.right_mask = right_mask
         if self.debug:
             cv2.imshow(" remove background", right_mask)
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}remove background.jpg".format(self.process_order), right_mask)
+                self.process_order += 1
         return diff_img, right_mask, right_contours
 
     def detect_orientaion(self):
@@ -220,6 +238,11 @@ class OrientationDetection():
                 cv2.imshow("right mask aa ", self.right_mask)
                 cv2.imshow("selfwarp", self.warp)
 
+                if self.save_img:
+                    cv2.imwrite("debug_imgs/{}right_mask.jpg".format(self.process_order), self.right_mask)
+                    cv2.imwrite("debug_imgs/{}selfwarp.jpg".format(self.process_order), self.warp)
+                    self.process_order += 1
+
             self.mask_notch, self.notch_contour, angle = self.detect_notch(self.warp)
 
             if self.flag_rotate == "rotate":
@@ -231,6 +254,9 @@ class OrientationDetection():
 
                 if self.debug:
                     cv2.imshow("selg img after rotate", self.img2)
+                    if self.save_img:
+                        cv2.imwrite("debug_imgs/{}self img after rotate.jpg".format(self.process_order), self.img2)
+                        self.process_order += 1
                 cv2.imshow("selg img after rotate", self.img2)
 
 
@@ -291,7 +317,7 @@ class OrientationDetection():
         right_contours = contour_area(contours,area_min= self.notch_area_min, area_max=self.notch_area_max) # setup params of notch
         if self.debug:
             print("{} {}notch contour".format(__name__,"detect_notch"), len(right_contours))
-        right_contours = contour_center_X_or_Y(right_contours,(warp_img.shape[1] - self.notch_dis_from_right_edge, 0),self.notch_dis_criterion,var="X")
+        right_contours = contour_center_X_or_Y(right_contours,(warp_img.shape[1] - self.notch_dis_from_right_edge, 0), self.notch_dis_criterion,var="X")
         if self.debug:
             print("{} {}notch contour".format(__name__,"detect_notch"), len(right_contours))
 
@@ -313,6 +339,10 @@ class OrientationDetection():
                 print(cY, warp_img.shape)
                 cv2.imshow("inv_warp", inv_warp)
                 cv2.imshow("mask_notach", mask_notch)
+                if self.save_img:
+                    cv2.imwrite("debug_imgs/{}inv_warp.jpg".format(self.process_order), inv_warp)
+                    cv2.imwrite("debug_imgs/{}mask_notach.jpg".format(self.process_order), mask_notch)
+                    self.process_order += 1
 
             angle = (cY/warp_img.shape[0])*360
         else:
@@ -328,6 +358,9 @@ class OrientationDetection():
             if self.debug:
                 cv2.imshow("raw1", self.img_bg)
                 cv2.waitKey(0)
+                if self.save_img:
+                    cv2.imwrite("debug_imgs/{}raw1.jpg".format(self.process_order), self.img_bg)
+                    self.process_order += 1
         self.img_bg_copy = deepcopy(self.img_bg)
 
 
@@ -351,6 +384,11 @@ class OrientationDetection():
             cv2.imshow(names[i], self.img_bg)
             cv2.imshow(names[j], img2)
 
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}".format(self.process_order)+names[i], self.img_bg)
+                cv2.imwrite("debug_imgs/{}".format(self.process_order)+names[j], img2)
+                self.process_order += 1
+
         ### MAIN ##########################
 
         diff_img, right_mask, right_contours = self.remove_background(self.img_bg,img2)
@@ -371,6 +409,12 @@ class OrientationDetection():
             cv2.imshow("warp",warp)
             cv2.imshow("and_img", and_img)
             cv2.imshow("img2_copy", img2_copy)
+
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}warp.jpg".format(self.process_order), warp)
+                cv2.imwrite("debug_imgs/{}and_img.jpg".format(self.process_order), and_img)
+                cv2.imwrite("debug_imgs/{}img2_copy.jpg".format(self.process_order), img2_copy)
+                self.process_order += 1
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
@@ -390,13 +434,14 @@ if __name__ == '__main__':
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\Darker - Exposure time 120000us close some ambient light"
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\120000_test_0930"
     folder = "F:\Ph.D\circle_classification\Containers_0930-20221224T055211Z-001\Containers_0930\Brighter - Exposure time 120000us only lifht source"
+    folder = "F:\Ph.D\circle_classification\container-orientation-detection\dataset\\new_0219"
     # folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\60000_test"
     # folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\\Exposure time 200000us"
 
     names = os.listdir(folder)
     print(names)
     i = 0
-    j = 5
+    j = 2
 
     params = {'sobel': (3, 1, 1), 'gaussianblur': (2, 2), 'canny': (350, 350), "dilate": [40, 0],"erode": [40, 0]}
     params = {'HSV': [0, 0, 90, 180, 255, 255], 'erode': (20, 0), 'dilate': (20, 0)}
