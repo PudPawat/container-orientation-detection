@@ -32,6 +32,37 @@ def contour_area(contours, area_min=0, area_max=1, write_area=True, draw_img = N
                     cv2.putText(draw_img, str(area), (cX, cY), cv2.FONT_HERSHEY_COMPLEX, 2, (0, 0, 255), 5)
     return right_contours
 
+
+def contour_big2small_n_order(bi_image, number = 3, write_area = True):
+    try:
+        _, contours, _ = cv2.findContours(bi_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    except:
+        _, contours = cv2.findContours(bi_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # contours_collect = []
+    area_contours = []
+    if contours is not None or contours != []:
+        for contour in contours:
+            try:
+                area = cv2.contourArea(contour)
+                if write_area:
+                    M = cv2.moments(contour)
+                    if M["m00"] == 0.0:
+                        M["m00"] = 0.01
+                    cX = int(M["m10"] / M["m00"])
+                    cY = int(M["m01"] / M["m00"])
+                area_contours.append([int(area),[cX, cY], contour])
+
+                # print(area)
+            except:
+                continue
+
+        only_n_contour = sorted(area_contours, key= lambda x:x[0], reverse= True)# [::-1]
+        # print(only_n_contour)
+        return only_n_contour[0:number]
+
+
+
 def contour_area_by_img(bi_image, draw_img,area_min = 0,area_max =1,write_area = True):
     '''
     to filter contour by using area_min and area_max

@@ -1,0 +1,163 @@
+import os
+import numpy as np
+import random
+
+
+import json
+from easydict import EasyDict
+from pathlib import Path
+from copy import deepcopy
+from PIL import Image
+from lib.contour_after_process import contour_area, contour_center_dis,contour_center_X_or_Y,contour_big2small_n_order
+from lib.warp_and_reverse_warp import warp_polar, reverse_warp
+from lib_save.read_params import *
+from utils import crop_circle
+
+
+def resize_scale(img, scale = 0.3):
+    resize = cv2.resize(img,(int(img.shape[1]*scale),int(img.shape[0]*scale)))
+    return resize
+
+
+class OrientationDetectionv2():
+    def __init__(self, path_ref = "", json_path = ""):
+        try:
+            with Path(json_path).open("r") as f:
+                self.opt = json.load(f)
+                self.opt = EasyDict(self.opt)
+                print(self.opt)
+        except:
+            print(" No file {}".format(json_path))
+
+        self.params = self.opt.params
+        self.debug =  self.opt.debug.lower() in ("yes", "true", "t", "1")
+        self.save_img = self.opt.save_img.lower() in ("yes", "true", "t", "1")
+        self.process_order = 0
+        self.show_result = self.opt.show_result.lower() in ("yes", "true", "t", "1")
+        self.flag_rotate = self.opt.flag_rotate
+        self.circle_inner_r = self.opt.crop_circle_fix_inner_r
+        self.circle_outer_r = self.opt.crop_circle_fix_outer_r
+        self.crop_circle_platform = self.opt.crop_circle_platform
+        self.resize_ratio = self.opt.resize_ratio
+        self.threshold = self.opt.inverse_threshold.lower() in ("yes", "true", "t", "1")
+        self.n_symetric = self.opt.n_symetric
+        self.read = read_save()
+        self.path_ref = path_ref
+        self.ref_names = os.listdir(self.path_ref)
+
+    def find_name_in_list(self, name):
+        for ref_name in self.ref_names:
+            if name == ref_name or (name in ref_name) or (ref_name in name):
+                return ref_name
+            else:
+                return None
+
+
+    def linear_process(self, img):
+        result, _, _ = self.read.read_params(self.params,img)
+        img_result = result["final"]
+        img_result = cv2.resize(img_result, (int(img.shape[1] * self.resize_ratio), int(img.shape[0] * self.resize_ratio)))
+        cv2.imshow("result",img_result)
+        img_linear_crop = self.crop_roi(img_result)
+        return img_linear_crop
+
+    def crop_roi(self, img):
+        img, warp = warp_polar(img, self.circle_outer_r)
+        img_linear_crop = warp[0: warp.shape[0], int(self.circle_inner_r[-1]):warp.shape[1]]
+        if self.debug:
+            cv2.imshow("warp_outer", warp)
+            cv2.imshow("warp_outer_crop", img_linear_crop)
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}warp_outer.jpg".format(self.process_order), warp)
+                cv2.imwrite("debug_imgs/{}warp_outer_crop.jpg".format(self.process_order), img_linear_crop)
+                self.process_order += 1
+        return img_linear_crop
+
+    def main_simple(self,img):
+
+
+        img_crop_platform = crop_circle(img, self.crop_circle_platform)
+        result = deepcopy(img_crop_platform)
+        linear_bi_img = self.linear_process(img)
+        if len(linear_bi_img.shape) == 2:
+            linear_bi_img_BGR = cv2.cvtColor(linear_bi_img,cv2.COLOR_GRAY2BGR)
+
+        if self.threshold:
+            _, linear_bi_img = cv2.threshold(linear_bi_img,0,255,cv2.THRESH_BINARY_INV)
+        area_contours = contour_big2small_n_order(linear_bi_img,self.n_symetric)
+        # area_contours = area_contours
+        if len(area_contours) != 0:
+            ### detect 1st biggest contour
+            area, center, _ = area_contours[0]
+            length360 = linear_bi_img.shape[0]
+            angle = abs(center[1] )/length360 * 360
+            print(angle)
+            # if angle > 360/self.n_symetric:
+            while (angle > 360/self.n_symetric):
+                angle = angle - (360/self.n_symetric)
+            cv2.putText(result, str(angle),(0, img_crop_platform.shape[0]),cv2.FONT_HERSHEY_COMPLEX,3,(255,0,0),2)
+            print(angle)
+            cv2.imshow("result_1",result)
+            if self.debug:
+                for _,_, contour in area_contours:
+                    cv2.drawContours(linear_bi_img_BGR,[contour],-1, (255,0,0),3)
+                cv2.imshow("contour", linear_bi_img_BGR)
+                cv2.waitKey(0)
+                if self.save_img:
+                    cv2.imwrite("debug_imgs/{}contour.jpg".format(self.process_order), linear_bi_img_BGR)
+                    cv2.imwrite("debug_imgs/{}result_img_crop_platform.jpg".format(self.process_order), img_crop_platform)
+                    cv2.imwrite("debug_imgs/{}result.jpg".format(self.process_order), result)
+                    self.process_order +=1
+
+    def main_compare(self,img, class_name):
+        img_crop_platform = crop_circle(img, self.crop_circle_platform)
+        img = cv2.rotate(img, cv2.ROTATE_180)
+        ## read ref
+        file_ref_name = self.find_name_in_list(class_name)
+        file_ref_name_platform = crop_circle(file_ref_name, self.crop_circle_platform)
+        ref_img = cv2.imread(os.path.join(self.path_ref, file_ref_name))
+        ref_linear_img = self.linear_process(ref_img)
+        linear_img = self.linear_process(img)
+        # cv2.imshow("ref", ref_img)
+        if self.debug:
+            cv2.imshow("ref_linear", ref_linear_img)
+            cv2.imshow("linear", linear_img)
+            cv2.waitKey(0)
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}ref_linear.jpg".format(self.process_order), ref_linear_img)
+                cv2.imwrite("debug_imgs/{}linear.jpg".format(self.process_order), linear_img)
+                self.process_order += 1
+
+
+
+    def preprocess(self, img, crop_circle):
+        '''
+
+        :param img:
+        :param crop_circle:
+        :return:
+        '''
+
+        img = cv2.resize(img, (int(img.shape[1] * self.resize_ratio), int(img.shape[0] * self.resize_ratio)))
+        ### warp
+        img, warp = warp_polar(img, crop_circle)
+        reversed_warp = reverse_warp(img, warp, crop_circle)
+        ### crop
+        reversed_warp = reversed_warp[int(crop_circle[1] - crop_circle[2]):int(crop_circle[1] + crop_circle[2]),
+                        int(crop_circle[0] - crop_circle[2]):int(crop_circle[0] + crop_circle[2])]
+        return reversed_warp
+
+
+if __name__ == '__main__':
+    path_imgs = "dataset/20230304"
+    names = os.listdir(path_imgs)
+
+    for name in names:
+        img_path = os.path.join(path_imgs,name)
+        img = cv2.imread(img_path)
+
+        detect = OrientationDetectionv2("dataset/20230304_ref",json_path = "config/notchv2_config_S00077.json")
+        class_name = name.split("_")[0]
+        # detect.main_compare(img, class_name)
+        detect.main_simple(img)
+        cv2.waitKey(0)
