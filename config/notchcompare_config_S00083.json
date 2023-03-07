@@ -7,7 +7,8 @@
   "save_img": "True",
   "inverse_threshold": "True",
   "n_symetric": 1,
-  "crop_circle_fix_inner_r": [537, 400, 180],
-  "crop_circle_fix_outer_r": [537, 400, 200],
+  "crop_circle_fix_inner_r": [537, 400, 108],
+  "crop_circle_fix_outer_r": [537, 400, 123],
+  "crop_circle_fix_outer_r2": [537, 400, 391],
   "crop_circle_platform": [537, 400, 391]
 }

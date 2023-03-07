@@ -224,7 +224,7 @@ class FeatureVisualization():
         print("outputs1", outputs1)
         result = []
         for j, name in enumerate(self.names_result.keys()):
-            dis = featureVis.compare_cosine(outputs1, self.names_result[name])
+            dis = self.compare_cosine(outputs1, self.names_result[name])
             result.append(dis[0])
 
 
@@ -241,7 +241,7 @@ class FeatureVisualization():
         #     t1 = time.time()
         #     self.plot_probablity(outputs2)
         #
-        #     dis = featureVis.compare_cosine(outputs1, outputs2)
+        #     dis = self.compare_cosine(outputs1, outputs2)
         #     print("compare_cosine", time.time() - t1)
         #     cv2.waitKey(1)
         #
@@ -249,7 +249,7 @@ class FeatureVisualization():
 
         result_array = np.asarray(result)
         ind = np.argmin(result_array)
-        class_obj = names_ref[ind].split("_")[0]
+        class_obj = self.names_ref[ind].split("_")[0]
         print("The class is {}".format(class_obj))
         # print(os.path.join(self.folder_ref, self.names_ref[ind]))
         answer = cv2.imread(os.path.join(self.folder_ref, self.names_ref[ind]))
