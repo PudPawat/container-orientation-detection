@@ -2,9 +2,12 @@ import numpy as np
 import cv2
 import math
 import os
+import json
 from bytecode import *
+from utils import save_json, open_json
 drawing = False  # true if mouse is pressed
 ix, iy = -1, -1
+
 
 # Create a function based on a CV2 Event (Left button click)
 class Draw():
@@ -74,24 +77,55 @@ class Draw():
         radius = np.sqrt((cx - p1[0]) ** 2 + (cy - p1[1]) ** 2)
 
         return ((cx, cy), radius)
+
+
+
 if __name__ == '__main__':
 
     draw = Draw()
+    default_config = {
+      "params": {"HSV": [0, 0, 55, 180, 255, 255], "gaussianblur": [1, 1], "dilate": [5, 0], "erode": [15, 0]},
+      "debug": "True",
+      "show_result": "True",
+      "flag_rotate": "None",
+      "resize_ratio": 0.3,
+      "save_img": "True",
+      "inverse_threshold": "True",
+      "n_symetric": 1,
+      "crop_circle_fix_inner_r": [537, 400, 175],
+      "crop_circle_fix_outer_r": [537, 402, 205],
+      "crop_circle_platform": [537, 400, 391],
+      "method_names": ["simple", "compare", "comparev2"],
+      "method": ""
+    }
 
-    # Create a black image
-    # img = np.zeros((512, 512, 3), np.uint8)
 
-    # This names the window so we can reference it
-    # Connects the mouse button to our callback function
+    config_folder = "../config/"
+    name_format = "notchv2_config_"
+
     circle = None
     circles = []
-    path = "F:\Ph.D\circle_classification\container-orientation-detection\dataset\\new_0219\\"
-    path = "../dataset/20230304"
+    # path = "F:\Ph.D\circle_classification\container-orientation-detection\dataset\\new_0219\\"
+    path = "../dataset/20230311"
     names = os.listdir(path)
     print(names)
     for name in names:
+        config_class = name.split("_")[0]
+        try:
+            # with open('../config/notchv2_config_{}.json'.format(config_class), 'r') as openfile:
+            config  = open_json(config_folder,name_format,config_class)
+            #     config = json.load(openfile)
+            print(config)
+        except:
+            config = default_config
+
+
+        try:
+            ratio = config["resize_ratio"]
+        except:
+            ratio = 0.3
         img = cv2.imread(os.path.join(path,name))
-        img = cv2.resize(img,(int(img.shape[1]*0.3),int(img.shape[0]*0.3)))
+        img = cv2.resize(img,(int(img.shape[1]*ratio),int(img.shape[0]*ratio)))
 
         cv2.namedWindow('image')
         cv2.setMouseCallback('image', draw.get_coord)
@@ -103,6 +137,7 @@ if __name__ == '__main__':
             if circle != draw.circle:
                 print("draw.circle",draw.circle)
                 circle = draw.circle
+                print(circle)
                 circle_resize = [(int(circle[0][0]/0.3),int(circle[0][1]/0.3)), int(circle[1]/0.3)]
                 circles.append(circle_resize)
 
@@ -115,8 +150,28 @@ if __name__ == '__main__':
                 if circles != []:
                     del circles[-1]
                 print("circles",circles)
-        # Once script is done, its usually good practice to call this line
-        # It closes all windows (just in case you have multiple windows called)
+
+            elif k == ord("i"): ## inner
+                inner_circle = [circle[0][0], circle[0][1],circle[-1]]
+                config["crop_circle_fix_inner_r"] = inner_circle
+                print("inner_circle: ", inner_circle)
+                save_json(config_folder, name_format, config_class, config)
+                # with open('../config/notchv2_config_{}.json'.format(config_class), 'w') as openfile:
+                #     json.dump(config, openfile)
+            elif k == ord("o"): ## outer
+                outer_circle = [circle[0][0], circle[0][1],circle[-1]]
+                config["crop_circle_fix_outer_r"] = outer_circle
+                print("outer_circle: ", outer_circle)
+                save_json(config_folder, name_format, config_class, config)
+                # with open('../config/notchv2_config_{}.json'.format(config_class), 'w') as openfile:
+                #     json.dump(config, openfile)
+            elif k == ord("p"): ## platform
+                platfrom_circle = [circle[0][0], circle[0][1],circle[-1]]
+                config["crop_circle_platform"] = platfrom_circle
+                print("platfrom_circle: ", platfrom_circle)
+                save_json(config_folder,name_format,config_class, config)
+
+
         try:
             crop_circle = draw.circle
             img_crop = img[int(crop_circle[1]):int(crop_circle[1] + crop_circle[2]),

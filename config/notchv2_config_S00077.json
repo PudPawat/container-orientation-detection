@@ -1,13 +1,48 @@
 {
-  "params": {"HSV": [0, 0, 55, 180, 255, 255], "gaussianblur": [1, 1], "dilate": [15, 0], "erode": [15, 0]},
+  "params": {
+    "HSV": [
+      0,
+      0,
+      56,
+      180,
+      255,
+      255
+    ],
+    "dilate": [
+      14,
+      0
+    ],
+    "erode": [
+      5,
+      0
+    ]
+  },
   "debug": "True",
   "show_result": "True",
   "flag_rotate": "None",
   "resize_ratio": 0.3,
   "save_img": "True",
   "inverse_threshold": "True",
-  "n_symetric": 3,
-  "crop_circle_fix_inner_r": [537, 400, 108],
-  "crop_circle_fix_outer_r": [537, 400, 123],
-  "crop_circle_platform": [537, 400, 391]
+  "n_symetric": 1,
+  "crop_circle_fix_inner_r": [
+    537.9340549779233,
+    403.31637231163654,
+    105.97216728228608
+  ],
+  "crop_circle_fix_outer_r": [
+    538.9925220938137,
+    402.0394289598912,
+    125.91279872120231
+  ],
+  "crop_circle_platform": [
+    536.4912464496904,
+    401.8584765097546,
+    389.7575257217559
+  ],
+  "method_names": [
+    "simple",
+    "compare",
+    "comparev2"
+  ],
+  "method": ""
 }

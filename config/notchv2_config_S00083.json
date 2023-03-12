@@ -9,5 +9,7 @@
   "n_symetric": 1,
   "crop_circle_fix_inner_r": [537, 400, 180],
   "crop_circle_fix_outer_r": [537, 400, 200],
-  "crop_circle_platform": [537, 400, 391]
+  "crop_circle_platform": [537, 400, 391],
+  "method_names": ["simple", "compare", "comparev2"],
+  "method": ""
 }

@@ -23,9 +23,7 @@ things before undersocre is name of the class
 ![alt text](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/classification_data_set.PNG?raw=true)
 
 ## notch_config.json
-- Type some Markdown on the left
-- See HTML in the right
-- ✨Magic ✨
+
 
 ```sh{
   "params": {"HSV": [0, 0, 70, 180, 255, 255], "erode": [4, 0], "dilate": [4, 0]}, ## HSV and other img_processign parameter (change only HSV is enough)

@@ -1,0 +1,15 @@
+{
+  "params": {"HSV": [0, 0, 55, 180, 255, 255], "gaussianblur": [1, 1], "dilate": [5, 0], "erode": [15, 0]},
+  "debug": "True",
+  "show_result": "True",
+  "flag_rotate": "None",
+  "resize_ratio": 0.3,
+  "save_img": "True",
+  "inverse_threshold": "True",
+  "n_symetric": 1,
+  "crop_circle_fix_inner_r": [537, 400, 175],
+  "crop_circle_fix_outer_r": [537, 402, 205],
+  "crop_circle_platform": [537, 400, 391],
+  "method_names": ["simple", "compare", "comparev2"],
+  "method": ""
+}

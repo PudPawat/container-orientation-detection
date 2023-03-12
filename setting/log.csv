@@ -1,0 +1,3 @@
+Time,Error_File,Error_Function,Error_Level,Error_Message
+[2023-03-12 15:24:37], [F:/Ph], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
+[2023-03-12 15:25:21], [F:/Ph], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!

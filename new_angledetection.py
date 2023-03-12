@@ -105,7 +105,7 @@ class OrientationDetectionv2():
         fc_ref_img = self.FeatureCompare.get_fc_feature(refimg_crop_outer_r)
         # cv2.waitKey(0)
         scores = []
-        n = 2  # try 360* n times if n = 2, try every 0.5 degree
+        n = times_rot  # try 360* n times if n = 2, try every 0.5 degree
         for i in range(int(times_rot * max_rot_angle)):
             test_rotate_img = rotate_image(img_crop_outer_r, i / (n))
             # cv2.imshow("test_rotate", test_rotate_img)
@@ -119,8 +119,56 @@ class OrientationDetectionv2():
         np_scores = np.asarray(scores)
         i_min = np.argmin(np_scores)
 
-        angle = i_min
-        print(angle / n)
+        print(i_min)
+
+        angle = i_min/times_rot
+
+        while (angle > 360 / self.n_symetric):
+            angle = angle - (360 / self.n_symetric)
+
+        return angle
+
+    def compare_by_rotate_angle_minus(self, refimg_crop_outer_r, img_crop_outer_r,times_rot = 1, max_rot_angle = 360):
+        '''
+        to compare ny iterating rotating the image and compare the score
+        :param refimg_crop_outer_r:
+        :param img_crop_outer_r:
+        :param times_rot: time devided by max_rot_angle
+        :param max_rot_angle: 360, 180, 120
+        :return:
+        '''
+        # fc_ref_img = self.FeatureCompare.get_fc_feature(refimg_crop_outer_r)
+        # cv2.waitKey(0)
+        scores = []
+        n = times_rot  # try 360* n times if n = 2, try every 0.5 degree
+        for i in range(int(times_rot * max_rot_angle)):
+            test_rotate_img = rotate_image(img_crop_outer_r, i / (n))
+            # cv2.imshow("test_rotate", test_rotate_img)
+            # fc_rotate = self.FeatureCompare.get_fc_feature(test_rotate_img)
+            # score = self.FeatureCompare.compare_cosine(fc_ref_img, fc_rotate)
+            try:
+                h, w, _ = test_rotate_img.shape
+            except:
+                h, w  = test_rotate_img.shape
+            diff = cv2.subtract(refimg_crop_outer_r, test_rotate_img)
+            err = np.sum(diff ** 2)
+            score = err / (float(h * w))
+            # print(score)
+            # print(sum(score))
+            scores.append(score)
+            # break
+            # print(score)
+            # cv2.waitKey(0)
+
+        np_scores = np.asarray(scores)
+        i_min = np.argmin(np_scores)
+
+        print(i_min)
+
+        angle = i_min/times_rot
+
+        # while (angle > 360 / self.n_symetric):
+        #     angle = angle - (360 / self.n_symetric)
 
         return angle
 
@@ -134,7 +182,7 @@ class OrientationDetectionv2():
         img_result = result["final"]
         return img_result
 
-    def main_simple(self,img):
+    def main_simple(self,img, class_name):
         '''
 
         :param img:
@@ -168,9 +216,9 @@ class OrientationDetectionv2():
                 cv2.imshow("contour", linear_bi_img_BGR)
                 cv2.waitKey(0)
                 if self.save_img:
-                    cv2.imwrite("debug_imgs/{}contour.jpg".format(self.process_order), linear_bi_img_BGR)
-                    cv2.imwrite("debug_imgs/{}result_img_crop_platform.jpg".format(self.process_order), img_crop_platform)
-                    cv2.imwrite("debug_imgs/{}result.jpg".format(self.process_order), result)
+                    cv2.imwrite("debug_imgs/{}_{}contour.jpg".format(class_name,self.process_order), linear_bi_img_BGR)
+                    cv2.imwrite("debug_imgs/{}_{}result_img_crop_platform.jpg".format(class_name,self.process_order), img_crop_platform)
+                    cv2.imwrite("debug_imgs/{}_{}result.jpg".format(class_name,self.process_order), result)
                     self.process_order +=1
 
 
@@ -225,15 +273,20 @@ class OrientationDetectionv2():
 
         resize_img = resize_scale(img)
         ## test rotate
-
-
         rotate_img_crop_c = crop_circle_by_warp(resize_img, self.circle_outer_r)
         rotate_img_crop_c = fill_balck_circle(rotate_img_crop_c, self.circle_inner_r)
         img_crop_outer_r = crop_circle(rotate_img_crop_c, self.circle_outer_r, False)
         img_crop_outer_r = rotate_image(img_crop_outer_r, 90)
         cv2.imshow("rotate", img_crop_outer_r)
+        if self.debug:
+            cv2.imshow("refimg_crop_outer_r.jpg".format(self.process_order),refimg_crop_outer_r)
+            cv2.imshow("img_crop_outer_r.jpg".format(self.process_order),img_crop_outer_r)
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}img_crop_outer_r.jpg".format(self.process_order),img_crop_outer_r)
+                cv2.imwrite("debug_imgs/{}refimg_crop_outer_r.jpg".format(self.process_order),refimg_crop_outer_r)
 
         angle = self.compare_by_rotate_angle(refimg_crop_outer_r,img_crop_outer_r)
+        print(angle)
 
     def main_compare_with_process(self, img, class_name):
         '''
@@ -250,6 +303,8 @@ class OrientationDetectionv2():
         file_ref_name = self.find_name_in_list(class_name)
         print(file_ref_name)
         ref_img = cv2.imread(os.path.join(self.path_ref, file_ref_name))
+        ## cv process
+        ref_img = self.process_param_img(ref_img)
         resize_refimg = resize_scale(ref_img)
         rotate_refimg_crop_c = crop_circle_by_warp(resize_refimg, self.circle_outer_r)
         rotate_refimg_crop_c = fill_balck_circle(rotate_refimg_crop_c, self.circle_inner_r)
@@ -257,24 +312,55 @@ class OrientationDetectionv2():
         # print(file_ref_name)
         cv2.imshow("ref", refimg_crop_outer_r)
 
+        img = self.process_param_img(img)
         resize_img = resize_scale(img)
+
         ## test rotate
         rotate_img_crop_c = crop_circle_by_warp(resize_img, self.circle_outer_r)
         rotate_img_crop_c = fill_balck_circle(rotate_img_crop_c, self.circle_inner_r)
         img_crop_outer_r = crop_circle(rotate_img_crop_c, self.circle_outer_r, False)
         img_crop_outer_r = rotate_image(img_crop_outer_r, 90)
         cv2.imshow("rotate", img_crop_outer_r)
+        cv2.waitKey(1)
+
+        if self.debug:
+            cv2.imshow("refimg_crop_outer_r.jpg".format(self.process_order),refimg_crop_outer_r)
+            cv2.imshow("img_crop_outer_r.jpg".format(self.process_order),img_crop_outer_r)
+            if self.save_img:
+                cv2.imwrite("debug_imgs/{}img_crop_outer_r.jpg".format(self.process_order),img_crop_outer_r)
+                cv2.imwrite("debug_imgs/{}refimg_crop_outer_r.jpg".format(self.process_order),refimg_crop_outer_r)
 
         ## process
         img_crop_outer_r_process = self.process_param_img(img_crop_outer_r)
         refimg_crop_outer_r_process = self.process_param_img(refimg_crop_outer_r)
 
-        img_crop_outer_r_process = cv2.cvtColor(img_crop_outer_r_process, cv2.COLOR_GRAY2BGR)
-        refimg_crop_outer_r_process = cv2.cvtColor(refimg_crop_outer_r_process, cv2.COLOR_GRAY2BGR)
-        refimg_crop_outer_r_process = rotate_image(refimg_crop_outer_r_process, 45)
+        # if self.debug:
+        #     cv2.imshow("refimg_crop_outer_r_process.jpg".format(self.process_order),refimg_crop_outer_r_process)
+        #     cv2.imshow("img_crop_outer_r_process.jpg".format(self.process_order),refimg_crop_outer_r_process)
+        #     if self.save_img:
+        #         cv2.imwrite("debug_imgs/{}img_crop_outer_r_process.jpg".format(self.process_order),refimg_crop_outer_r_process)
+        #         cv2.imwrite("debug_imgs/{}refimg_crop_outer_r_process.jpg".format(self.process_order),refimg_crop_outer_r_process)
+        #
+        # if len(img_crop_outer_r_process.shape) == 2:
+        #     img_crop_outer_r_process = cv2.cvtColor(img_crop_outer_r_process, cv2.COLOR_GRAY2BGR)
+        # if len(refimg_crop_outer_r_process.shape) == 2:
+        #     refimg_crop_outer_r_process = cv2.cvtColor(refimg_crop_outer_r_process, cv2.COLOR_GRAY2BGR)
         cv2.waitKey(1)
-        angle = self.compare_by_rotate_angle(refimg_crop_outer_r_process, img_crop_outer_r_process,2,120)
+        if len(refimg_crop_outer_r.shape) == 2:
+            refimg_crop_outer_r = cv2.cvtColor(refimg_crop_outer_r, cv2.COLOR_GRAY2BGR)
+        if len(img_crop_outer_r.shape) == 2:
+            img_crop_outer_r = cv2.cvtColor(img_crop_outer_r, cv2.COLOR_GRAY2BGR)
+        try:
+            # refimg_crop_outer_r_process = rotate_image(refimg_crop_outer_r_process, 45)
+            angle = self.compare_by_rotate_angle_minus(refimg_crop_outer_r_process, img_crop_outer_r_process,1,int(360/self.n_symetric))
+            # angle = self.compare_by_rotate_angle(refimg_crop_outer_r_process, img_crop_outer_r_process,2,int(360/self.n_symetric))
+        except:
+            # refimg_crop_outer_r = rotate_image(refimg_crop_outer_r, 45)
+            angle = self.compare_by_rotate_angle_minus(refimg_crop_outer_r, img_crop_outer_r,1,int(360/self.n_symetric))
+            # angle = self.compare_by_rotate_angle(refimg_crop_outer_r, img_crop_outer_r,2,int(360/self.n_symetric))
         print(angle)
+        cv2.waitKey(0)
+
 
     def preprocess(self, img, crop_circle):
         '''
@@ -295,17 +381,17 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230304"
+    path_imgs = "dataset/20230311"
     names = os.listdir(path_imgs)
 
-    for name in names[0:-1]:
+    for name in names:
         img_path = os.path.join(path_imgs,name)
+        print("detect img name", name)
         img = cv2.imread(img_path)
 
         class_name = name.split("_")[0]
-        detect = OrientationDetectionv2("dataset/20230304_ref",json_path = "config/notchv2_config_{}.json".format(class_name))
+        detect = OrientationDetectionv2("dataset/20230311",json_path = "config/notchv2_config_{}.json".format(class_name))
         # detect.main_compare(img, class_name)
-        # detect.main_simple(img)
-        # detect.main_compare1(img, class_name)
-        detect.main_compare_with_process(img, class_name)
+        detect.main_simple(img, class_name)
+        # detect.main_compare1(img, class_nam         detect.main_compare_with_process(img, class_name)
         # cv2.waitKey(0)
