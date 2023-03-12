@@ -1,14 +1,6 @@
 {
   "basic": {
-    "source1": "data/container/image/60000_test",
-    "source3": "F:\\Pawat\\Projects\\Imageprocessing_Vistools\\data\\container\\image\\Exposure time 120000us 30degree",
     "source": "F:\\Ph.D\\circle_classification\\container-orientation-detection\\dataset\\20230311",
-    "source2": "F:\\Ph.D\\circle_classification\\container-orientation-detection\\dataset\\new_0219",
-    "source1": "data/OUTPUT_PUWATs_DATA/240degree/maskrcnn_angle",
-    "green":"config/green1.json",
-    "gold": "",
-    "black": "config/black1.json",
-    "red": "config/red.json",
     "camera_config": "config/camera_config/a2A2590-60ucPRO_40065215.pfs",
     "process_name": ["erode","sharp","blur","thresh","line","HSV","dilate","canny","circle","sobel"],
     "process": ["HSV","dilate","erode"],
