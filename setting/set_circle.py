@@ -3,8 +3,13 @@ import cv2
 import math
 import os
 import json
-from bytecode import *
+
 from utils import save_json, open_json
+# from bytecode import *
+# try:
+#     from utils import save_json, open_json
+# except:
+#     from ..utils import save_json, open_json
 drawing = False  # true if mouse is pressed
 ix, iy = -1, -1
 
