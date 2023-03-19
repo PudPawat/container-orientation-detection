@@ -220,6 +220,7 @@ class OrientationDetectionv2():
                     cv2.imwrite("debug_imgs/{}_{}result_img_crop_platform.jpg".format(class_name,self.process_order), img_crop_platform)
                     cv2.imwrite("debug_imgs/{}_{}result.jpg".format(class_name,self.process_order), result)
                     self.process_order +=1
+        cv2.waitKey(0)
 
 
 
@@ -381,7 +382,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230311"
+    path_imgs = "dataset/20230318"
     names = os.listdir(path_imgs)
 
     for name in names:

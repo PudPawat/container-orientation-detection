@@ -40,6 +40,9 @@ class Imageprocessing(object):
             elif improc_module == "sobel":
                 self.var_sobel = TrackBar.Sobel()
 
+            elif improc_module == "barrel_distort":
+                self.var_barrel_distort = TrackBar.BarrelDistort()
+
 
 
 
@@ -456,3 +459,52 @@ class Imageprocessing(object):
             cv.imshow(self.var_sobel.window_sobel_det_name, grad)
         
         return grad, (kernel_size, delta_val, scale_val)
+
+
+    def barrel_distort(self, img, show = True):
+        '''
+        Threshold : setting threshold value
+        :param img:
+        :param show:
+        :return:
+        '''
+        offsetcx, offsetcy, ui_k1, ui_k2, ui_p1,ui_p2,focal_length_1,focal_length_2 = self.var_barrel_distort.return_var()
+        width = img.shape[1]
+        height = img.shape[0]
+        print(width/2, height/2)
+
+        distCoeff = np.zeros((4, 1), np.float64)
+
+        # TODO: add your coefficients here!
+        k1 = float(50 - ui_k1) * (1.0e-5)  # negative to remove barrel distortion
+        k2 = float(50 - ui_k2) * (1.0e-5)
+        p1 = float(50 - ui_p1) * (1.0e-5)
+        p2 = float(50 - ui_p2) * (1.0e-5)
+        # k1 = float(25-k1)*e-5 # negative to remove barrel distortion
+        # k2 = 0.0;floar
+        # p1 = 0;
+        # p2 = 0;
+
+        # p1 = -5.0e-5;
+        # p2 = -5.0e-5;
+
+        distCoeff[0, 0] = k1;
+        distCoeff[1, 0] = k2;
+        distCoeff[2, 0] = p1;
+        distCoeff[3, 0] = p2;
+
+        # assume unit matrix for camera
+        cam = np.eye(3, dtype=np.float32)
+
+        cam[0, 2] = (width / 2.0)+(offsetcx-50)  # define center x
+        cam[1, 2] = (height / 2.0)+(offsetcy-50)  # define center y
+        cam[0, 0] = focal_length_1  # define focal length x
+        cam[1, 1] = focal_length_2  # define focal length y
+
+        # here the undistortion will be computed
+        distort = cv.undistort(img, cam, distCoeff)
+        if show == True:
+            cv.imshow(self.var_barrel_distort.window_distort_det_name, distort)
+
+        # return distort, (ui_k1,ui_k2,ui_p1,ui_p2,cam[0, 2],cam[1, 2],cam[0, 0],cam[1, 1])
+        return distort, (offsetcx, offsetcy, ui_k1, ui_k2, ui_p1,ui_p2,focal_length_1,focal_length_2)

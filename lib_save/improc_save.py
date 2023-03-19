@@ -134,7 +134,7 @@ class Imageprocessing(object):
 
         return th, (th_val)
 
-    def canny(self,img,params, show = False):
+    def canny(self, img, params, show = False):
         """
         Function Name: canny
         
