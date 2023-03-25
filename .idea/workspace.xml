@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d3e9e30-8d69-4938-bc61-48f84cd350a2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/main.json" beforeDir="false" afterPath="$PROJECT_DIR$/config/main.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/notchv2_config_S00011.json" beforeDir="false" afterPath="$PROJECT_DIR$/config/notchv2_config_S00011.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/improc.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/improc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/trackbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/trackbar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/log.csv" beforeDir="false" afterPath="$PROJECT_DIR$/log.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setting_params copy.py" beforeDir="false" afterPath="$PROJECT_DIR$/setting_params copy.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
