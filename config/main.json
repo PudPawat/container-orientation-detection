@@ -1,9 +1,9 @@
 {
   "basic": {
-    "source": "pylon",
+    "source": "dataset\\20230318",
     "camera_config": "config/camera_config/a2A2590-60ucPRO_40065215.pfs",
-    "process_name": ["erode","sharp","blur","thresh","line","HSV","dilate","canny","circle","sobel"],
-    "process": ["HSV","dilate","erode","sobel"],
+    "process_name": ["erode","sharp","blur","thresh","line","HSV","dilate","canny","circle","sobel","barrel_distort"],
+    "process": ["barrel_distort","blur","HSV","dilate","erode"],
     "config_path": "./config/",
     "config_name_format": "notchv2_config_"
   }

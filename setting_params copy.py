@@ -88,6 +88,11 @@ class Set_params():
             elif process == "sobel":
                 frame_sobel, params["sobel"] = imgproc.sobel(frame)
                 frame = deepcopy(frame_sobel)
+            elif process == "barrel_distort":
+                frame_barrel, params["barrel_distort"] = imgproc.barrel_distort(frame)
+                frame = deepcopy(frame_barrel)
+                # print("barrel_distort")
+                # print( params["barrel_distort"])
                 #### working space ###
                 # frame_HSV = cv.resize(frame_HSV,(int(frame_HSV.shape[1]/3),int(frame_HSV.shape[0]/3)))
                 # {'HSV': [0, 0, 147, 28, 47, 255], 'erode': (1, 0), 'dilate': (2, 0)}
@@ -136,7 +141,9 @@ class Set_params():
                 while key != ord("q"):
                     frame = cv.imread(source + "/" + name)
                     frame_result, params = self.process(frame, imgproc)
+                    cv.namedWindow("Final", cv.WINDOW_NORMAL)
                     cv.imshow("Final", frame_result)
+
                     key = cv.waitKey(0)
                     if key == ord('i'):
                         cv.imwrite("./output/general/" +name,frame_result)
@@ -232,7 +239,7 @@ if __name__ == '__main__':
     # opt = parser.parse_args()
 
     set_param = Set_params()
-    set_param.main()
-    # set_param.set_config()
+    # set_param.main()
+    set_param.set_config()
 
     # print(parser)

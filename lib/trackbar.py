@@ -456,7 +456,7 @@ class TrackBar(object):
             self.type_kernel = 1
             self.max_size = 100
             self.max_type = 7
-            self.kernel_name = "kenel_size"
+            self.kernel_name = "kernel_size"
             self.type_name = "ty:1REC,2GRA,3Cro,4DIA,5SQR,6STA,7ELIP"
 
             cv.namedWindow(self.window_dilate_det_name, cv.WINDOW_NORMAL)
@@ -482,8 +482,8 @@ class TrackBar(object):
             self.kernel_size = 5
             self.type_kernel = 5
             self.max_size = 100
-            self.max_type = 7
-            self.kernel_name = "kenel_size"
+            self.max_type = 20
+            self.kernel_name = "kernel_size"
             self.type_name = "ty:1REC,2GRA,3Cro,4DIA,5SQR,6STA,7ELIP"
 
             cv.namedWindow(self.window_erode_det_name, cv.WINDOW_NORMAL)
@@ -513,7 +513,7 @@ class TrackBar(object):
             self.max_size = 100
             self.max_kernel_size = 31
             self.max_ddepth = 20
-            self.kernel_name = "kenel_size"
+            self.kernel_name = "kernel_size"
             self.delta_name = "delta_size"
             self.scale_name = "scale"
 
@@ -539,3 +539,86 @@ class TrackBar(object):
 
         def return_var(self):
             return (self.kernel_size, self.delta_val, self.scale_val)
+
+
+    class BarrelDistort(object):
+        def __init__(self):
+            self.window_distort_det_name = "Barrel Distortion"
+            self.offsetcx = 500
+            self.offsetcy = 500
+            self.k1 = 50  # negative to remove barrel distortion
+            self.k2 = 50
+            self.p1 = 0
+            self.p2 = 0
+            self.focal_length_1 = 10
+            self.focal_length_2 = 10
+            self.offsetcx_name = "Offset Cx"
+            self.offsetcy_name = "Offset Cy"
+            self.k1_name = "k1"
+            self.k2_name = "k2"
+            self.p1_name = "p1"
+            self.p2_name = "p2"
+            self.focal_length_1_name = "focal_length_1"
+            self.focal_length_2_name = "focal_length_2"
+
+            cv.namedWindow(self.window_distort_det_name, cv.WINDOW_NORMAL)
+            cv.createTrackbar(self.offsetcx_name, self.window_distort_det_name, self.offsetcx, 1000,
+                              self.on_offsetcx_size)
+
+            cv.createTrackbar(self.offsetcy_name, self.window_distort_det_name, self.offsetcy, 1000,
+                              self.on_offsetcy_size)
+
+            cv.createTrackbar(self.k1_name, self.window_distort_det_name, self.k1, 100,
+                              self.on_k1_size)
+
+            cv.createTrackbar(self.k2_name, self.window_distort_det_name, self.k2, 100,
+                              self.on_k2_size)
+
+            cv.createTrackbar(self.p1_name, self.window_distort_det_name, self.p1, 100,
+                              self.on_p1_size)
+
+            cv.createTrackbar(self.p2_name, self.window_distort_det_name, self.p2, 100,
+                              self.on_p2_size)
+
+            cv.createTrackbar(self.focal_length_1_name, self.window_distort_det_name, self.focal_length_1, 150,
+                              self.on_focal_length_1_size)
+
+            cv.createTrackbar(self.focal_length_2_name, self.window_distort_det_name, self.focal_length_2, 150,
+                              self.on_focal_length_2_size)
+
+
+
+        def on_offsetcx_size(self, val):
+            self.offsetcx = val
+            cv.setTrackbarPos(self.offsetcx_name, self.window_distort_det_name, self.offsetcx)
+
+        def on_offsetcy_size(self, val):
+            self.offsetcy = val
+            cv.setTrackbarPos(self.offsetcy_name, self.window_distort_det_name, self.offsetcy)
+
+        def on_k1_size(self, val):
+            self.k1 = val
+            cv.setTrackbarPos(self.k1_name, self.window_distort_det_name, self.k1)
+
+        def on_k2_size(self, val):
+            self.k2 = val
+            cv.setTrackbarPos(self.k2_name, self.window_distort_det_name, self.k2)
+
+        def on_p1_size(self, val):
+            self.p1 = val
+            cv.setTrackbarPos(self.p1_name, self.window_distort_det_name, self.p1)
+
+        def on_p2_size(self, val):
+            self.p2 = val
+            cv.setTrackbarPos(self.p2_name, self.window_distort_det_name, self.p2)
+
+        def on_focal_length_1_size(self, val):
+            self.focal_length_1 = val
+            cv.setTrackbarPos(self.focal_length_1_name, self.window_distort_det_name, self.focal_length_1)
+
+        def on_focal_length_2_size(self, val):
+            self.focal_length_2 = val
+            cv.setTrackbarPos(self.focal_length_2_name, self.window_distort_det_name, self.focal_length_2)
+        def return_var(self):
+            return (self.offsetcx, self.offsetcy, self.k1, self.k2, self.p1, self.p2, self.focal_length_1, self.focal_length_2)
+
