@@ -105,6 +105,18 @@ class read_save(object):
                 frame, params["sobel"] = self.imgproc.sobel(frame,params[key],show=False)
                 frame_proc["sobel"] = frame
 
+            elif key == "barrel_distort":
+                frame, params["barrel_distort"] = self.imgproc.barrel_distort(frame,params[key],show=False)
+                frame_proc["barrel_distort"] = frame
+
+            elif key == "crop":
+                frame, params["crop"] = self.imgproc.crop(frame,params[key],show=False)
+                frame_proc["crop"] = frame
+
+            elif key == "contour_area":
+                frame, params["contour_area"] = self.imgproc.contour_area(frame,params[key],show=False)
+                frame_proc["contour_area"] = frame
+
         frame_proc["final"] = frame
 
         return frame_proc, circle, line

@@ -71,8 +71,9 @@ class OrientationDetectionv2():
         '''
         result, _, _ = self.read.read_params(self.params,img)
         img_result = result["final"]
-        img_result = cv2.resize(img_result, (int(img.shape[1] * self.resize_ratio), int(img.shape[0] * self.resize_ratio)))
         cv2.imshow("result",img_result)
+        img_result = cv2.resize(img_result, (int(img.shape[1] * self.resize_ratio), int(img.shape[0] * self.resize_ratio)))
+        cv2.waitKey(0)
         img_linear_crop = self.crop_roi(img_result)
         return img_linear_crop
 
@@ -391,7 +392,7 @@ if __name__ == '__main__':
         img = cv2.imread(img_path)
 
         class_name = name.split("_")[0]
-        detect = OrientationDetectionv2("dataset/20230311",json_path = "config/notchv2_config_{}.json".format(class_name))
+        detect = OrientationDetectionv2("dataset/20230318",json_path = "config/notchv2_config_{}.json".format(class_name))
         # detect.main_compare(img, class_name)
         detect.main_simple(img, class_name)
         # detect.main_compare1(img, class_nam         detect.main_compare_with_process(img, class_name)
