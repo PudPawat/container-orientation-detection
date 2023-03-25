@@ -11,7 +11,10 @@ class Imageprocessing(object):
     new_width = 662
     new_height = 622
     def __init__(self,opt):
-        for improc_module in opt.basic.process :
+        self.resize_command = opt.basic.resize.lower() in ["true", "1"]
+
+
+        for n,  improc_module in enumerate(opt.basic.process) :
             if improc_module == "sharp":
                 self.var_sharpen = TrackBar.Sharpen()
             elif improc_module == "blur":
@@ -33,7 +36,11 @@ class Imageprocessing(object):
                 self.var_dilate = TrackBar.Dilate()
 
             elif improc_module == "erode":
-                self.var_erode = TrackBar.Erode()
+                # try:
+                #     print(self.var_erode)
+                self.var_erode = TrackBar.Erode(n)
+                # except:
+                #     self.var_erode = TrackBar.Erode(n)
 
             elif improc_module == "canny":
                 self.var_canny = TrackBar.Canny()
@@ -83,7 +90,8 @@ class Imageprocessing(object):
         _, th = cv.threshold(img,th_val, 255, flag)
         if show == True:
             th_vis = deepcopy(th)
-            th_vis = cv.resize(th_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                th_vis = cv.resize(th_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_binary.window_binary_name, th_vis)
 
         return th, (th_val)
@@ -104,7 +112,8 @@ class Imageprocessing(object):
         print(canny)
         if show == True:
             canny_vis = deepcopy(canny)
-            canny_vis = cv.resize(canny_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                canny_vis = cv.resize(canny_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_canny.window_canny_name, canny_vis)
         return canny, (Y_val, X_val)
 
@@ -123,7 +132,8 @@ class Imageprocessing(object):
         canny = cv.Canny(img, Y_val, X_val)
         if show == True:
             canny_vis = deepcopy(canny)
-            canny_vis = cv.resize(canny_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                canny_vis = cv.resize(canny_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_canny_1.window_canny_name, canny_vis)
         return canny, (Y_val, X_val)
 
@@ -143,7 +153,8 @@ class Imageprocessing(object):
 
         if show == True:
             blur_vis = deepcopy(blur)
-            blur_vis = cv.resize(blur_vis, (int(new_width/1.2), int(new_height/1.2)))
+            if self.resize_command:
+                blur_vis = cv.resize(blur_vis, (int(new_width/1.2), int(new_height/1.2)))
             cv.imshow(self.var_blur.window_blur_name, blur_vis)
 
         return blur,(filter_size)
@@ -166,7 +177,8 @@ class Imageprocessing(object):
 
         if show == True:
             blur_vis = deepcopy(blur)
-            blur_vis = cv.resize(blur_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                blur_vis = cv.resize(blur_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_gaussianblur.window_blur_name, blur_vis)
 
         return blur,(x,y)
@@ -199,7 +211,8 @@ class Imageprocessing(object):
 
         if show == True:
             frame_threshold_vis = deepcopy(frame_threshold)
-            frame_threshold_vis = cv.resize(frame_threshold_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                frame_threshold_vis = cv.resize(frame_threshold_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_HSV_range.window_detection_name, frame_threshold_vis)
 
         return  frame_threshold, [low_H, low_S, low_V, high_H, high_S, high_V]
@@ -226,7 +239,8 @@ class Imageprocessing(object):
 
         if show == True:
             frame_threshold_vis = deepcopy(frame_threshold)
-            frame_threshold_vis = cv.resize(frame_threshold_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                frame_threshold_vis = cv.resize(frame_threshold_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_HSV_range_1.window_detection_name, frame_threshold_vis)
 
         return  frame_threshold, [low_H, low_S, low_V, high_H, high_S, high_V]
@@ -251,7 +265,8 @@ class Imageprocessing(object):
         sharp = cv.filter2D(img, -1, kernel)
         if show == True:
             sharp_vis = deepcopy(sharp)
-            sharp_vis = cv.resize(sharp_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                sharp_vis = cv.resize(sharp_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_sharpen.window_sharp_name, sharp_vis)
         # checkpoint to continue
         return sharp, (factor)
@@ -299,7 +314,8 @@ class Imageprocessing(object):
 
         if show == True:
             draw_img_vis = deepcopy(draw_img)
-            draw_img_vis = cv.resize(draw_img_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                draw_img_vis = cv.resize(draw_img_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_line_det.window_line_detection_name, draw_img_vis)
 
         return draw_img,lines , (rho1, theta2, threshold3, none4, srn5, stn6)
@@ -423,7 +439,8 @@ class Imageprocessing(object):
 
         if show == True:
             dilate_vis = deepcopy(dilate)
-            dilate_vis = cv.resize(dilate_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                dilate_vis = cv.resize(dilate_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_dilate.window_dilate_det_name, dilate_vis)
 
         return dilate, (kernel_size, type_kernel)
@@ -464,7 +481,8 @@ class Imageprocessing(object):
         erode = cv.erode(img, kernel)
         if show == True:
             erode_vis = deepcopy(erode)
-            erode_vis = cv.resize(erode_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                erode_vis = cv.resize(erode_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_erode.window_erode_det_name, erode_vis)
 
         return erode, (kernel_size, type_kernel)
@@ -491,7 +509,8 @@ class Imageprocessing(object):
 
         if show == True:
             grad_vis = deepcopy(grad)
-            grad_vis = cv.resize(grad_vis, (int(new_width/1.5), int(new_height/1.5)))
+            if self.resize_command:
+                grad_vis = cv.resize(grad_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_sobel.window_sobel_det_name, grad_vis)
 
         return grad, (kernel_size, delta_val, scale_val)
@@ -541,7 +560,8 @@ class Imageprocessing(object):
         distort = cv.undistort(img, cam, distCoeff)
         if show == True:
             distort_vis = deepcopy(distort)
-            distort = cv.resize(distort_vis, (int(new_width), int(new_height)))
+            if self.resize_command:
+                distort = cv.resize(distort_vis, (int(new_width), int(new_height)))
             cv.imshow(self.var_barrel_distort.window_distort_det_name, distort_vis)
 
         # return distort, (ui_k1,ui_k2,ui_p1,ui_p2,cam[0, 2],cam[1, 2],cam[0, 0],cam[1, 1])
@@ -562,9 +582,9 @@ class Imageprocessing(object):
         new_height_upper = int((height/2)+((height/2)*(crop_y/100)))
         new_height_lower = int((height/2)-((height/2)*(crop_y/100)))
 
+        cropped_image = img[new_height_lower:new_height_upper , new_width_left:new_width_right]
         if show == True:
             # distort = cv.resize(distort, (width, height))
-            cropped_image = img[new_height_lower:new_height_upper , new_width_left:new_width_right]
             print("new_width_right", new_width_right)
             print("new_width_left", new_width_left)
             print("new_height_upper", new_height_upper)
@@ -581,7 +601,7 @@ class Imageprocessing(object):
 
 
         # return distort, (ui_k1,ui_k2,ui_p1,ui_p2,cam[0, 2],cam[1, 2],cam[0, 0],cam[1, 1])
-        return cropped_image, (new_width, new_height)
+        return cropped_image, (crop_x, crop_y)
 
     def contour_area(self, img, show = True):
         '''
@@ -640,8 +660,7 @@ class Imageprocessing(object):
                 only_n_contour = sorted(right_contours, key=lambda x: x[0], reverse=b2s_bool)[0:-1] # [::-1]
             print("only_n_contour",len(only_n_contour))
             for _,_, selected_contour in only_n_contour:
-
-                cv.drawContours(draw_img, [selected_contour], -1, (255, 255, 255), 5)
+                cv.drawContours(draw_img, [selected_contour], -1, (255, 255, 255), -1)
                 # cv.drawContours(draw_img, only_n_contour, -1, (255, 0, 0), 5)
 
         if show == True:

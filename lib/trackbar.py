@@ -190,7 +190,7 @@ class TrackBar(object):
             self.high_S_name = 'High S'
             self.high_V_name = 'High V'
 
-            cv.namedWindow(self.window_detection_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_detection_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_detection_name, 500, 200)
 
             cv.createTrackbar(self.low_H_name, self.window_detection_name, self.low_H, self.max_value_H,
@@ -501,8 +501,8 @@ class TrackBar(object):
             return (self.kernel_size, self.type_kernel)
 
     class Erode(object):
-        def __init__(self):
-            self.window_erode_det_name = "erode"
+        def __init__(self, n_process):
+            self.window_erode_det_name = "erode" + str(n_process)
             self.kernel_size = 5
             self.type_kernel = 5
             self.max_size = 100
@@ -690,12 +690,12 @@ class TrackBar(object):
             self.area_max_name = "area max"
 
 
-            cv.namedWindow(self.window_contour_area_det_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_contour_area_det_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_contour_area_det_name, 500, 200)
-            cv.createTrackbar(self.area_min_name, self.window_contour_area_det_name, self.area_min, 10000,
+            cv.createTrackbar(self.area_min_name, self.window_contour_area_det_name, self.area_min, 1000000,
                               self.on_min_name_size)
 
-            cv.createTrackbar(self.area_max_name, self.window_contour_area_det_name, self.area_max, 10000,
+            cv.createTrackbar(self.area_max_name, self.window_contour_area_det_name, self.area_max, 1000000,
                               self.on_max_name_size)
             cv.createTrackbar(self.b2s_s2b_name, self.window_contour_area_det_name, self.b2s, 1,
                               self.on_b2s)
@@ -704,9 +704,11 @@ class TrackBar(object):
 
         def on_min_name_size(self, val):
             self.area_min = val
+            self.area_min = min(self.area_max - 1, self.area_min)
             cv.setTrackbarPos(self.area_min_name, self.window_contour_area_det_name, self.area_min)
         def on_max_name_size(self, val):
             self.area_max = val
+            self.area_max = max(self.area_max, self.area_min + 1)
             cv.setTrackbarPos(self.area_max_name, self.window_contour_area_det_name, self.area_max)
 
         def on_n_name_size(self, val):
