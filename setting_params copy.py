@@ -93,6 +93,16 @@ class Set_params():
                 frame_barrel, params["barrel_distort"] = imgproc.barrel_distort(frame)
                 print( params["barrel_distort"])
                 frame = deepcopy(frame_barrel)
+            elif process == "crop":
+                print("crop")
+                frame_crop, params["crop"] = imgproc.crop(frame)
+                print(params["crop"])
+                frame = deepcopy(frame_crop)
+            elif process == "contour_area":
+                print("contour_area")
+                frame_crop, params["contour_area"] = imgproc.contour_area(frame)
+                print(params["contour_area"])
+                frame = deepcopy(frame_crop)
                 #### working space ###
                 # frame_HSV = cv.resize(frame_HSV,(int(frame_HSV.shape[1]/3),int(frame_HSV.shape[0]/3)))
                 # {'HSV': [0, 0, 147, 28, 47, 255], 'erode': (1, 0), 'dilate': (2, 0)}

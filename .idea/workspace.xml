@@ -5,30 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d3e9e30-8d69-4938-bc61-48f84cd350a2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/config/notchv2_config_00011_1.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/notchv2_config_S00011.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataset/distort/test.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataset/distort/test1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataset/distort/test2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataset/distort/testfinal.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/setting/barrel_distortion.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/setting/test1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/setting/test2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/setting/testfinal.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/container-orientation-detection.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/container-orientation-detection.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/main.json" beforeDir="false" afterPath="$PROJECT_DIR$/config/main.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug_imgs/0warp_outer.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/debug_imgs/0warp_outer.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug_imgs/0warp_outer_crop.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/debug_imgs/0warp_outer_crop.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/notchv2_config_S00011.json" beforeDir="false" afterPath="$PROJECT_DIR$/config/notchv2_config_S00011.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/improc.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/improc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/trackbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/trackbar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib_save/improc_save.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib_save/improc_save.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/log.csv" beforeDir="false" afterPath="$PROJECT_DIR$/log.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/new_angledetection.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_angledetection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set_circle copy.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_circle copy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/setting_params copy.py" beforeDir="false" afterPath="$PROJECT_DIR$/setting_params copy.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -166,12 +148,12 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "last_opened_file_path": "C:/Users/Ploy/Desktop/New folder/container-orientation-detection/dataset/distort",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Ploy/Desktop/New folder/container-orientation-detection/dataset/distort&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Ploy\Desktop\New folder\container-orientation-detection\dataset\distort" />
