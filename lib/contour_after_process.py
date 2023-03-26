@@ -34,6 +34,7 @@ def contour_area(contours, area_min=0, area_max=1, write_area=True, draw_img = N
 
 
 def contour_big2small_n_order(bi_image, number = 3, write_area = True):
+    print(len(bi_image))
     try:
         _, contours, _ = cv2.findContours(bi_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     except:

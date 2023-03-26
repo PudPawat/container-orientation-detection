@@ -48,5 +48,8 @@
     "compare",
     "comparev2"
   ],
-  "method": ""
+  "method": "",
+  "simple_tiny": {
+    "outer_r_safety": -10
+  }
 }

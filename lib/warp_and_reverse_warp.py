@@ -9,6 +9,7 @@ def warp_polar( img_bi, circles):
     warp polar : https://docs.opencv.org/master/da/d54/group__imgproc__transform.html#ga49481ab24fdaa0ffa4d3e63d14c0d5e4
     :param img_bi:
     :param img_ori_result:
+    circle: (x,y,r)
     :return:
     """
     warp_img = None

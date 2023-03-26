@@ -654,8 +654,8 @@ class Imageprocessing(object):
         # assume unit matrix for camera
         cam = np.eye(3, dtype=np.float32)
 
-        cam[0, 2] = (width / 2.0)+(offsetcx-50)  # define center x
-        cam[1, 2] = (height / 2.0)+(offsetcy-50)  # define center y
+        cam[0, 2] = (width / 2.0)+(offsetcx-500)  # define center x
+        cam[1, 2] = (height / 2.0)+(offsetcy-500)  # define center y
         cam[0, 0] = focal_length_1  # define focal length x
         cam[1, 1] = focal_length_2  # define focal length y
 
