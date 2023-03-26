@@ -592,7 +592,7 @@ class TrackBar(object):
             cv.namedWindow(self.window_distort_det_name, cv.WINDOW_GUI_EXPANDED)
             cv.resizeWindow(self.window_distort_det_name, 500, 200)
 
-            cv.createTrackbar(self.offsetcx_name, self.window_distort_det_name, self.offsetcx, 100,
+            cv.createTrackbar(self.offsetcx_name, self.window_distort_det_name, self.offsetcx, 1000,
                               self.on_offsetcx_size)
 
             cv.createTrackbar(self.offsetcy_name, self.window_distort_det_name, self.offsetcy, 1000,
