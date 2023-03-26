@@ -3,7 +3,8 @@ import math
 from .trackbar import *
 import cv2 as cv
 from copy import deepcopy
-
+from pathlib import Path
+import json
 
 class Imageprocessing(object):
     global new_width
@@ -11,54 +12,120 @@ class Imageprocessing(object):
     new_width = 662
     new_height = 622
     def __init__(self,opt):
+
+        print("Imageprocessing: opt", opt)
         self.resize_command = opt.basic.resize.lower() in ["true", "1"]
 
+        try:
+            self.params_preset_path = opt.basic.params_temp
+            with Path(self.params_preset_path).open("r") as f:
+                self.params_preset = json.load(f)
+        except:
+            with Path("config/params_default.json").open("r") as f:
+                self.params_preset = json.load(f)
 
         for n,  improc_module in enumerate(opt.basic.process) :
             if improc_module == "sharp":
-                self.var_sharpen = TrackBar.Sharpen()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_sharpen = TrackBar.Sharpen(self.params_preset[improc_module])
             elif improc_module == "blur":
-                self.var_blur = TrackBar.Blur()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_blur = TrackBar.Blur(self.params_preset[improc_module])
 
             elif improc_module == "gaussianblur":
-                self.var_gaussianblur = TrackBar.GaussianBlur()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_gaussianblur = TrackBar.GaussianBlur(self.params_preset[improc_module])
 
             elif improc_module == "thresh":
-                self.var_binary = TrackBar.Binary()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_binary = TrackBar.Binary(self.params_preset[improc_module])
 
             elif improc_module == "line":
-                self.var_line_det = TrackBar.LineDetection()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_line_det = TrackBar.LineDetection(self.params_preset[improc_module])
 
             elif improc_module == "HSV":
-                self.var_HSV_range = TrackBar.HSV()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_HSV_range = TrackBar.HSV(self.params_preset[improc_module])
 
             elif improc_module == "dilate":
-                self.var_dilate = TrackBar.Dilate()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_dilate = TrackBar.Dilate(self.params_preset[improc_module])
 
             elif improc_module == "erode":
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
                 # try:
                 #     print(self.var_erode)
-                self.var_erode = TrackBar.Erode(n)
+                self.var_erode = TrackBar.Erode(self.params_preset[improc_module],n)
                 # except:
                 #     self.var_erode = TrackBar.Erode(n)
 
             elif improc_module == "canny":
-                self.var_canny = TrackBar.Canny()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_canny = TrackBar.Canny(self.params_preset[improc_module])
 
             elif improc_module == "circle":
-                self.var_circle_det = TrackBar.CircleDetection()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_circle_det = TrackBar.CircleDetection(self.params_preset[improc_module])
 
             elif improc_module == "sobel":
-                self.var_sobel = TrackBar.Sobel()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_sobel = TrackBar.Sobel(self.params_preset[improc_module])
 
             elif improc_module == "barrel_distort":
-                self.var_barrel_distort = TrackBar.BarrelDistort()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_barrel_distort = TrackBar.BarrelDistort(self.params_preset[improc_module])
 
             elif improc_module == "crop":
-                self.var_crop = TrackBar.Crop()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_crop = TrackBar.Crop(self.params_preset[improc_module])
 
             elif improc_module == "contour_area":
-                self.var_contour_area = TrackBar.Contour_area()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_contour_area = TrackBar.Contour_area(self.params_preset[improc_module])
+                # self.var_contour_area = TrackBar.Contour_area()
 
 
 
@@ -347,14 +414,16 @@ class Imageprocessing(object):
 
         if circles is not None:
             circles = np.uint16(np.around(circles))
-            for i in circles[0, :]:
-                center = (i[0], i[1])
+            print(circles)
+            for i, circle in enumerate(circles[0, :]):
+                center = (circle[0], circle[1])
                 # circle center
                 cv.circle(draw_img, center, 1, (0, 100, 100), 3)
                 # circle outline
-                radius = i[2]
+                radius = circle[2]
                 cv.circle(draw_img, center, radius, (255, 0, 255), 3)
-
+                if i > 15:
+                    break
 
         if show == True:
             draw_img = cv.resize(draw_img, (int(new_width/1.5), int(new_height/1.5)))
