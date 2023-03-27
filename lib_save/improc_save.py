@@ -134,7 +134,7 @@ class Imageprocessing(object):
 
         return th, (th_val)
 
-    def canny(self,img,params, show = False):
+    def canny(self, img, params, show = False):
         """
         Function Name: canny
         
@@ -623,3 +623,128 @@ class Imageprocessing(object):
             cv.imshow("sobel", grad)
 
         return grad, (kernel_size, delta_val, scale_val)
+
+    def barrel_distort(self, img,params, show = True):
+        '''
+        Threshold : setting threshold value
+        :param img:
+        :param show:
+        :return:
+        '''
+        # offsetcx, offsetcy, ui_k1, ui_k2, ui_p1,ui_p2,focal_length_1,focal_length_2 = self.var_barrel_distort.return_var()
+        offsetcx, offsetcy, ui_k1, ui_k2, ui_p1,ui_p2,focal_length_1,focal_length_2 = params
+        width = img.shape[1]
+        height = img.shape[0]
+        print(width/2, height/2)
+
+        distCoeff = np.zeros((4, 1), np.float64)
+
+        # TODO: add your coefficients here!
+        k1 = float(50 - ui_k1) * (1.0e-5)  # negative to remove barrel distortion
+        k2 = float(50 - ui_k2) * (1.0e-5)
+        p1 = float(50 - ui_p1) * (1.0e-5)
+        p2 = float(50 - ui_p2) * (1.0e-5)
+
+
+        distCoeff[0, 0] = k1;
+        distCoeff[1, 0] = k2;
+        distCoeff[2, 0] = p1;
+        distCoeff[3, 0] = p2;
+
+        # assume unit matrix for camera
+        cam = np.eye(3, dtype=np.float32)
+
+        cam[0, 2] = (width / 2.0)+(offsetcx-50)  # define center x
+        cam[1, 2] = (height / 2.0)+(offsetcy-50)  # define center y
+        cam[0, 0] = focal_length_1  # define focal length x
+        cam[1, 1] = focal_length_2  # define focal length y
+
+        # here the undistortion will be computed
+        distort = cv.undistort(img, cam, distCoeff)
+        if show == True:
+            cv.imshow("distort", distort)
+
+        # return distort, (ui_k1,ui_k2,ui_p1,ui_p2,cam[0, 2],cam[1, 2],cam[0, 0],cam[1, 1])
+        return distort, (offsetcx, offsetcy, ui_k1, ui_k2, ui_p1,ui_p2,focal_length_1,focal_length_2)
+
+    def crop(self, img,params,  show = True):
+        '''
+        Threshold : setting threshold value
+        :param img:
+        :param show:
+        :return:
+        '''
+        # crop_x, crop_y = self.var_crop.return_var()
+        crop_x, crop_y = params
+        width = img.shape[1]
+        height = img.shape[0]
+        new_width_left = int((width/2)-((width/2)*(crop_x/100)))
+        new_width_right = int((width/2)+((width/2)*(crop_x/100)))
+        new_height_upper = int((height/2)+((height/2)*(crop_y/100)))
+        new_height_lower = int((height/2)-((height/2)*(crop_y/100)))
+
+        cropped_image = img[new_height_lower:new_height_upper , new_width_left:new_width_right]
+        if show == True:
+            cv.imshow("crop", cropped_image)
+
+
+        # return distort, (ui_k1,ui_k2,ui_p1,ui_p2,cam[0, 2],cam[1, 2],cam[0, 0],cam[1, 1])
+        return cropped_image, (crop_x, crop_y)
+
+    def contour_area(self, img, params, show = True):
+        '''
+        Threshold : setting threshold value
+        :param img:
+        :param show:
+        :return:
+        '''
+        if len(img.shape) == 3:  ## RGB 2 gray
+            bi_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        else:
+            bi_image = img
+
+        try:
+            _, contours, _ = cv.findContours(bi_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        except:
+            _, contours = cv.findContours(bi_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+        # area_min, area_max, n, b2s = self.var_contour_area.return_var()
+        area_min, area_max, n, b2s = params
+
+        right_contours = []
+        if contours is not None or contours != []:
+            for contour in contours:
+                try:
+                    area = cv.contourArea(contour)
+                    # print(area)
+                except:
+                    continue
+                if area >= area_min and area <= area_max:
+                    M = cv.moments(contour)
+                    if M["m00"] == 0.0:
+                        M["m00"] = 0.01
+                    cX = int(M["m10"] / M["m00"])
+                    cY = int(M["m01"] / M["m00"])
+                    right_contours.append([int(area),[cX, cY], contour])
+
+
+        ### sort and limit n
+        draw_img = np.zeros((img.shape[0], img.shape[1]), dtype=np.uint8)
+        if right_contours != []:
+            if b2s == 1:
+                b2s_bool = True
+            else:
+                b2s_bool = False
+
+            try:
+                only_n_contour = sorted(right_contours, key=lambda x: x[0], reverse=b2s_bool)[0:n] # [::-1]
+
+            except:
+                only_n_contour = sorted(right_contours, key=lambda x: x[0], reverse=b2s_bool)[0:-1] # [::-1]
+            print("only_n_contour",len(only_n_contour))
+            for _,_, selected_contour in only_n_contour:
+                cv.drawContours(draw_img, [selected_contour], -1, (255, 255, 255), -1)
+
+        if show == True:
+            cv.imshow("contours params", draw_img)
+        return draw_img, (area_min, area_max, n, b2s)

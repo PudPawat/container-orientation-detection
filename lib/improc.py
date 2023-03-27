@@ -2,12 +2,19 @@ import numpy as np
 import math
 from .trackbar import *
 import cv2 as cv
+from copy import deepcopy
 
 
 class Imageprocessing(object):
-
+    global new_width
+    global new_height
+    new_width = 662
+    new_height = 622
     def __init__(self,opt):
-        for improc_module in opt.basic.process :
+        self.resize_command = opt.basic.resize.lower() in ["true", "1"]
+
+
+        for n,  improc_module in enumerate(opt.basic.process) :
             if improc_module == "sharp":
                 self.var_sharpen = TrackBar.Sharpen()
             elif improc_module == "blur":
@@ -29,7 +36,11 @@ class Imageprocessing(object):
                 self.var_dilate = TrackBar.Dilate()
 
             elif improc_module == "erode":
-                self.var_erode = TrackBar.Erode()
+                # try:
+                #     print(self.var_erode)
+                self.var_erode = TrackBar.Erode(n)
+                # except:
+                #     self.var_erode = TrackBar.Erode(n)
 
             elif improc_module == "canny":
                 self.var_canny = TrackBar.Canny()
@@ -39,6 +50,15 @@ class Imageprocessing(object):
 
             elif improc_module == "sobel":
                 self.var_sobel = TrackBar.Sobel()
+
+            elif improc_module == "barrel_distort":
+                self.var_barrel_distort = TrackBar.BarrelDistort()
+
+            elif improc_module == "crop":
+                self.var_crop = TrackBar.Crop()
+
+            elif improc_module == "contour_area":
+                self.var_contour_area = TrackBar.Contour_area()
 
 
 
@@ -69,7 +89,10 @@ class Imageprocessing(object):
 
         _, th = cv.threshold(img,th_val, 255, flag)
         if show == True:
-            cv.imshow(self.var_binary.window_binary_name, th)
+            th_vis = deepcopy(th)
+            if self.resize_command:
+                th_vis = cv.resize(th_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_binary.window_binary_name, th_vis)
 
         return th, (th_val)
 
@@ -88,7 +111,10 @@ class Imageprocessing(object):
         canny = cv.Canny(img, Y_val, X_val)
         print(canny)
         if show == True:
-            cv.imshow(self.var_canny.window_canny_name, canny)
+            canny_vis = deepcopy(canny)
+            if self.resize_command:
+                canny_vis = cv.resize(canny_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_canny.window_canny_name, canny_vis)
         return canny, (Y_val, X_val)
 
     def canny_1(self,img, show = True):
@@ -105,7 +131,10 @@ class Imageprocessing(object):
 
         canny = cv.Canny(img, Y_val, X_val)
         if show == True:
-            cv.imshow(self.var_canny_1.window_canny_name, canny)
+            canny_vis = deepcopy(canny)
+            if self.resize_command:
+                canny_vis = cv.resize(canny_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_canny_1.window_canny_name, canny_vis)
         return canny, (Y_val, X_val)
 
     def blur(self,img, show = True):
@@ -123,7 +152,10 @@ class Imageprocessing(object):
         blur = cv.blur(img, (int(filter_size), int(filter_size)))
 
         if show == True:
-            cv.imshow(self.var_blur.window_blur_name, blur)
+            blur_vis = deepcopy(blur)
+            if self.resize_command:
+                blur_vis = cv.resize(blur_vis, (int(new_width/1.2), int(new_height/1.2)))
+            cv.imshow(self.var_blur.window_blur_name, blur_vis)
 
         return blur,(filter_size)
 
@@ -144,7 +176,10 @@ class Imageprocessing(object):
         blur = cv.GaussianBlur(img, (int(x), int(y)),0)
 
         if show == True:
-            cv.imshow(self.var_gaussianblur.window_blur_name, blur)
+            blur_vis = deepcopy(blur)
+            if self.resize_command:
+                blur_vis = cv.resize(blur_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_gaussianblur.window_blur_name, blur_vis)
 
         return blur,(x,y)
 
@@ -175,7 +210,10 @@ class Imageprocessing(object):
 
 
         if show == True:
-            cv.imshow(self.var_HSV_range.window_detection_name, frame_threshold)
+            frame_threshold_vis = deepcopy(frame_threshold)
+            if self.resize_command:
+                frame_threshold_vis = cv.resize(frame_threshold_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_HSV_range.window_detection_name, frame_threshold_vis)
 
         return  frame_threshold, [low_H, low_S, low_V, high_H, high_S, high_V]
 
@@ -200,7 +238,10 @@ class Imageprocessing(object):
             frame_threshold = cv.inRange(frame_HLS, (low_H, low_V, low_S), (high_H, high_V, high_S))
 
         if show == True:
-            cv.imshow(self.var_HSV_range_1.window_detection_name, frame_threshold)
+            frame_threshold_vis = deepcopy(frame_threshold)
+            if self.resize_command:
+                frame_threshold_vis = cv.resize(frame_threshold_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_HSV_range_1.window_detection_name, frame_threshold_vis)
 
         return  frame_threshold, [low_H, low_S, low_V, high_H, high_S, high_V]
 
@@ -221,11 +262,14 @@ class Imageprocessing(object):
         factor = self.var_sharpen.return_var()
         kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
         kernel = (factor/10) * kernel
-        img = cv.filter2D(img, -1, kernel)
+        sharp = cv.filter2D(img, -1, kernel)
         if show == True:
-            cv.imshow(self.var_sharpen.window_sharp_name, img)
+            sharp_vis = deepcopy(sharp)
+            if self.resize_command:
+                sharp_vis = cv.resize(sharp_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_sharpen.window_sharp_name, sharp_vis)
         # checkpoint to continue
-        return img, (factor)
+        return sharp, (factor)
 
 
     def line_detection(self, img, draw_img, show = True):
@@ -269,7 +313,10 @@ class Imageprocessing(object):
                 cv.line(draw_img, pt1, pt2, (0, 0, 255), 3, cv.LINE_AA)
 
         if show == True:
-            cv.imshow(self.var_line_det.window_line_detection_name, draw_img)
+            draw_img_vis = deepcopy(draw_img)
+            if self.resize_command:
+                draw_img_vis = cv.resize(draw_img_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_line_det.window_line_detection_name, draw_img_vis)
 
         return draw_img,lines , (rho1, theta2, threshold3, none4, srn5, stn6)
 
@@ -295,8 +342,8 @@ class Imageprocessing(object):
         if param2 == 0:
             param2 = 1
         circles = cv.HoughCircles(img, cv.HOUGH_GRADIENT, 1, rows / 5,
-                                   param1=param1, param2=param2,
-                                   minRadius=min, maxRadius=max)
+                                  param1=param1, param2=param2,
+                                  minRadius=min, maxRadius=max)
 
         if circles is not None:
             circles = np.uint16(np.around(circles))
@@ -310,6 +357,7 @@ class Imageprocessing(object):
 
 
         if show == True:
+            draw_img = cv.resize(draw_img, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_circle_det.window_circle_det_name, draw_img)
 
         return img, circles, (param1,param2, min, max)
@@ -336,8 +384,8 @@ class Imageprocessing(object):
         if param2 == 0:
             param2 = 1
         circles = cv.HoughCircles(img, cv.HOUGH_GRADIENT, 1, rows / 5,
-                                   param1=param1, param2=param2,
-                                   minRadius=min, maxRadius=max)
+                                  param1=param1, param2=param2,
+                                  minRadius=min, maxRadius=max)
 
         if circles is not None:
             circles = np.uint16(np.around(circles))
@@ -351,6 +399,7 @@ class Imageprocessing(object):
 
 
         if show == True:
+            draw_img = cv.resize(draw_img, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_circle_det_1.window_circle_det_name, draw_img)
 
         return img, circles, (param1,param2, min, max)
@@ -386,12 +435,15 @@ class Imageprocessing(object):
             kernel_size = 1
         kernel = cv.getStructuringElement(type_kernel, (kernel_size, kernel_size))
 
-        dialate = cv.dilate(img, kernel, iterations=1)
+        dilate = cv.dilate(img, kernel, iterations=1)
 
         if show == True:
-            cv.imshow(self.var_dilate.window_dilate_det_name, dialate)
+            dilate_vis = deepcopy(dilate)
+            if self.resize_command:
+                dilate_vis = cv.resize(dilate_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_dilate.window_dilate_det_name, dilate_vis)
 
-        return dialate, (kernel_size, type_kernel)
+        return dilate, (kernel_size, type_kernel)
 
 
     def erode(self, img, show = True):
@@ -428,7 +480,10 @@ class Imageprocessing(object):
         #                                    (kernel_size, kernel_size))
         erode = cv.erode(img, kernel)
         if show == True:
-            cv.imshow(self.var_erode.window_erode_det_name, erode)
+            erode_vis = deepcopy(erode)
+            if self.resize_command:
+                erode_vis = cv.resize(erode_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_erode.window_erode_det_name, erode_vis)
 
         return erode, (kernel_size, type_kernel)
 
@@ -453,6 +508,171 @@ class Imageprocessing(object):
 
 
         if show == True:
-            cv.imshow(self.var_sobel.window_sobel_det_name, grad)
-        
+            grad_vis = deepcopy(grad)
+            if self.resize_command:
+                grad_vis = cv.resize(grad_vis, (int(new_width/1.5), int(new_height/1.5)))
+            cv.imshow(self.var_sobel.window_sobel_det_name, grad_vis)
+
         return grad, (kernel_size, delta_val, scale_val)
+
+
+    def barrel_distort(self, img, show = True):
+        '''
+        Threshold : setting threshold value
+        :param img:
+        :param show:
+        :return:
+        '''
+        offsetcx, offsetcy, ui_k1, ui_k2, ui_p1,ui_p2,focal_length_1,focal_length_2 = self.var_barrel_distort.return_var()
+        width = img.shape[1]
+        height = img.shape[0]
+        print(width/2, height/2)
+
+        distCoeff = np.zeros((4, 1), np.float64)
+
+        # TODO: add your coefficients here!
+        k1 = float(50 - ui_k1) * (1.0e-5)  # negative to remove barrel distortion
+        k2 = float(50 - ui_k2) * (1.0e-5)
+        p1 = float(50 - ui_p1) * (1.0e-5)
+        p2 = float(50 - ui_p2) * (1.0e-5)
+        # k1 = float(25-k1)*e-5 # negative to remove barrel distortion
+        # k2 = 0.0;floar
+        # p1 = 0;
+        # p2 = 0;
+
+        # p1 = -5.0e-5;
+        # p2 = -5.0e-5;
+
+        distCoeff[0, 0] = k1;
+        distCoeff[1, 0] = k2;
+        distCoeff[2, 0] = p1;
+        distCoeff[3, 0] = p2;
+
+        # assume unit matrix for camera
+        cam = np.eye(3, dtype=np.float32)
+
+        cam[0, 2] = (width / 2.0)+(offsetcx-500)  # define center x
+        cam[1, 2] = (height / 2.0)+(offsetcy-500)  # define center y
+        cam[0, 0] = focal_length_1  # define focal length x
+        cam[1, 1] = focal_length_2  # define focal length y
+
+        # here the undistortion will be computed
+        distort = cv.undistort(img, cam, distCoeff)
+        if show == True:
+            distort_vis = deepcopy(distort)
+            if self.resize_command:
+                distort = cv.resize(distort_vis, (int(new_width), int(new_height)))
+            cv.imshow(self.var_barrel_distort.window_distort_det_name, distort_vis)
+
+        # return distort, (ui_k1,ui_k2,ui_p1,ui_p2,cam[0, 2],cam[1, 2],cam[0, 0],cam[1, 1])
+        return distort, (offsetcx, offsetcy, ui_k1, ui_k2, ui_p1,ui_p2,focal_length_1,focal_length_2)
+
+    def crop(self, img, show = True):
+        '''
+        Threshold : setting threshold value
+        :param img:
+        :param show:
+        :return:
+        '''
+        crop_x, crop_y = self.var_crop.return_var()
+        width = img.shape[1]
+        height = img.shape[0]
+        new_width_left = int((width/2)-((width/2)*(crop_x/100)))
+        new_width_right = int((width/2)+((width/2)*(crop_x/100)))
+        new_height_upper = int((height/2)+((height/2)*(crop_y/100)))
+        new_height_lower = int((height/2)-((height/2)*(crop_y/100)))
+
+        cropped_image = img[new_height_lower:new_height_upper , new_width_left:new_width_right]
+        if show == True:
+            # distort = cv.resize(distort, (width, height))
+            print("new_width_right", new_width_right)
+            print("new_width_left", new_width_left)
+            print("new_height_upper", new_height_upper)
+            print("new_height_lower", new_height_lower)
+            # dim = (new_width_left:new_width_right, new_height_lower:new_height_upper)
+            # dim = (width/3, height/3)
+
+            new_width = cropped_image.shape[1]
+            new_height = cropped_image.shape[0]
+
+            # resize image
+            resized = cv.resize(cropped_image,(int(new_width/2), int(new_height/2)))
+            cv.imshow(self.var_crop.window_crop_det_name, resized)
+
+
+        # return distort, (ui_k1,ui_k2,ui_p1,ui_p2,cam[0, 2],cam[1, 2],cam[0, 0],cam[1, 1])
+        return cropped_image, (crop_x, crop_y)
+
+    def contour_area(self, img, show = True):
+        '''
+        Threshold : setting threshold value
+        :param img:
+        :param show:
+        :return:
+        '''
+        if len(img.shape) == 3:  ## RGB 2 gray
+            bi_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        else:
+            bi_image = img
+
+        try:
+            _, contours, _ = cv.findContours(bi_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        except:
+            _, contours = cv.findContours(bi_image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+        area_min, area_max, n, b2s = self.var_contour_area.return_var()
+
+        right_contours = []
+        # if type(draw_img) != type(None):
+        #     draw = True
+        # else:
+        #     draw = False
+        if contours is not None or contours != []:
+            for contour in contours:
+                try:
+                    area = cv.contourArea(contour)
+                    # print(area)
+                except:
+                    continue
+                if area >= area_min and area <= area_max:
+                    M = cv.moments(contour)
+                    if M["m00"] == 0.0:
+                        M["m00"] = 0.01
+                    cX = int(M["m10"] / M["m00"])
+                    cY = int(M["m01"] / M["m00"])
+                    right_contours.append([int(area),[cX, cY], contour])
+
+
+        ### sort and limit n
+        draw_img = np.zeros((img.shape[0], img.shape[1]), dtype=np.uint8)
+        if right_contours != []:
+            if b2s == 1:
+                b2s_bool = True
+            else:
+                b2s_bool = False
+
+            # print(right_contours)
+# only_n_contour = sorted(right_contours, key=lambda x: x[0], reverse=True)[0:n]  # [::-1]
+            try:
+                only_n_contour = sorted(right_contours, key=lambda x: x[0], reverse=b2s_bool)[0:n] # [::-1]
+
+            except:
+                only_n_contour = sorted(right_contours, key=lambda x: x[0], reverse=b2s_bool)[0:-1] # [::-1]
+            print("only_n_contour",len(only_n_contour))
+            for _,_, selected_contour in only_n_contour:
+                cv.drawContours(draw_img, [selected_contour], -1, (255, 255, 255), -1)
+                # cv.drawContours(draw_img, only_n_contour, -1, (255, 0, 0), 5)
+
+        if show == True:
+            # distort = cv.resize(distort, (int(new_width), int(new_height)))
+            print(draw_img, draw_img.shape)
+            cv.imshow(self.var_contour_area.window_contour_area_det_name, draw_img)
+            # pass
+        # if write_area:
+        #     M = cv.moments(contour)
+        #     if M["m00"] == 0.0:
+        #         M["m00"] = 0.01
+        #     cX = int(M["m10"] / M["m00"])
+        #     cY = int(M["m01"] / M["m00"])
+        #     cv.putText(draw_img, str(area), (cX, cY), cv.FONT_HERSHEY_COMPLEX, 2, (0, 0, 255), 5)
+        return draw_img, (area_min, area_max, n, b2s)
