@@ -14,6 +14,10 @@ from lib_save.read_params import *
 from lib.compare_img_module import FeatureVisualizationModule
 from utils import crop_circle, rotate_image, crop_circle_by_warp, fill_balck_circle
 
+### mac 
+import faulthandler
+faulthandler.enable()
+
 
 def resize_scale(img, scale = 0.3):
     resize = cv2.resize(img,(int(img.shape[1]*scale),int(img.shape[0]*scale)))

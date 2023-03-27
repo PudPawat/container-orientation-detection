@@ -17,9 +17,9 @@ from utils import listDir, Log, save_json, open_json
 class Set_params():
 
     def __init__(self):
-        self.log = Log("main.py", stream_level="INFO", stream_enable=True, record_level="WARNING",
-                       record_path='log.csv')
-        self.log.show("===== start program =====", "INFO")
+        # self.log = Log("main.py", stream_level="INFO", stream_enable=True, record_level="WARNING",
+        #                record_path='log.csv')
+        # self.log.show("===== start program =====", "INFO")
 
         self.params = {}
         self.rect_params = {}
@@ -30,7 +30,8 @@ class Set_params():
                 self.opt = json.load(f)
                 print(self.opt)
         except:
-            self.log.show("config/main.json" + " doesn't exist. Please, select the file again!", "ERROR")
+            # self.log.show("config/main.json" + " doesn't exist. Please, select the file again!", "ERROR")
+            pass
 
         if self.opt != {}:
             self.opt = EasyDict(self.opt)
