@@ -238,18 +238,29 @@ class OrientationDetectionv2():
 
         result_proc, _, _ = self.read.read_params(self.params, img)
         img_result = result_proc["final"]
-        cv2.imshow("img_result", img_result)
-        cv2.waitKey(0)
+        if self.debug:
+            cv2.imshow("img_result", img_result)
+            if self.save_img:
+                for key in result_proc.keys():
+                    cv2.imwrite("debug_imgs/{}_{}result_proc.jpg".format(class_name+str(key), self.process_order), result_proc[key])
+
+                cv2.imwrite("debug_imgs/{}_{}result_proc.jpg".format(class_name, self.process_order), img_result)
+                self.process_order += 1
 
         a_contour = contour_big2small_n_order(img_result, 1)
         x,y = get_x_y_from_contour(a_contour[0][2])
         xc, yc, r, loss = fit_circle_2d(x,y)
+
+        ### remove noise
         try:
             r = r - abs(self.opt["simple_tiny"]["outer_r_safety"])
         except:
             r = r - 5
+
+
         img, linear_bi_img = warp_polar(img_result, (xc, yc, r))
         if self.threshold:
+            print("inverse")
             _, linear_bi_img = cv2.threshold(linear_bi_img, 0, 255, cv2.THRESH_BINARY_INV)
 
         cv2.imshow("test", linear_bi_img)

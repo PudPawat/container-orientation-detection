@@ -130,30 +130,121 @@ class Imageprocessing(object):
 
 
 
+    def read_params(self, params, frame, print = False):
+        """
+        Function Name: read_params
 
-        #### another state #####
-        # self.var_canny_1 = TrackBar.Canny1()
-        # self.var_circle_det_1 = TrackBar.CircleDetection1()
-        # self.var_HSV_range_1 = TrackBar.HSV1()
+        Description: read all image processing from json file eg. threshold, HSV inrange
+        and put those parameters to process in Imageorocessing()
 
-    def threshold(self, img, show = True):
+        Argument:
+            params [dict] -> [all parameters]
+            frame [array] -> [image for processing]
+
+        Parameters:
+
+        Return:
+            frame [array] -> [image after process]
+
+        Edited by: [12-07-2020] [Pawat]
+        """
+        frame_proc = {}
+        circle = {}
+        line = {}
+        for key in params.keys():
+            if print:
+                print(key)
+            circle = []
+            line = []
+            # frame_result1 = frame.copy()
+            # frame = cv2.resize(frame_result1, (int(frame_result1.shape[1] / self.opt.basic.resize_factor),
+            #                                   int(frame_result1.shape[0] / self.opt.basic.resize_factor)))
+            # frame_result = frame.copy()
+            if key == "HSV":
+                # frame_HSV, params['HSV'] = imgproc.HSV_range(frame, params[key])
+                frame, params['HSV'] = self.imgproc.HSV_range(frame, params[key])
+                frame_proc["HSV"] = frame
+
+            elif key == "erode":
+                # frame_erode, params['erode'] = imgproc.erode(frame, params[key])
+                frame, params['erode'] = self.imgproc.erode(frame, params[key])
+                frame_proc["erode"] = frame
+
+            elif key == "dilate":
+                # frame_dialte, params['dilate'] = imgproc.dilate(frame, params[key])
+                frame, params['dilate'] = self.imgproc.dilate(frame, params[key])
+                frame_proc["dilate"] = frame
+
+            elif key == "thresh":
+                # frame_binary, params['thresh'] = imgproc.threshold(frame, params[key])
+                frame, params['thresh'] = self.imgproc.threshold(frame, params[key])
+                frame_proc["thresh"] = frame
+
+            elif key == "sharp":
+                # frame_sharp, params['sharp'] = imgproc.sharpen(frame, params[key])
+                frame, params['sharp'] = self.imgproc.sharpen(frame, params[key])
+                frame_proc["sharp"] = frame
+
+            elif key == "blur":
+                # frame_blur, params['blur'] = imgproc.blur(frame, params[key])
+                frame, params['blur'] = self.imgproc.blur(frame, params[key])
+                frame_proc["blur"] = frame
+
+            elif key == "gaussianblur":
+                frame, params["gaussianblur"] = self.imgproc.gaussianblur(frame,params[key])
+                frame_proc["gaussianblur"] = frame
+
+            elif key == "line":
+                # frame_line, lines, params['line'] = imgproc.line_detection(frame, frame0, params[key])
+                if len(frame.shape) == 2:
+                    frame0 = cv.cvtColor(frame, cv.COLOR_GRAY2BGR)
+                frame, lines, params['line'] = self.imgproc.line_detection(frame, frame0, params[key])
+                frame_proc["line"] = frame
+
+            elif key == "canny":
+                # frame_canny, params['canny'] = imgproc.canny(frame, params[key], show=True)
+                frame, params['canny'] = self.imgproc.canny(frame, params[key], show=False)
+                frame_proc["canny"] = frame
+
+            elif key == "circle":
+                # frame_circle, circle, params['circle'] = imgproc.circle_detection(frame, frame0, params[key], show=False)
+                if len(frame.shape) == 2:
+                    frame0 = cv.cvtColor(frame, cv.COLOR_GRAY2BGR)
+                frame, circle, params['circle'] = self.imgproc.circle_detection(frame, frame0, params[key], show=False)
+                frame_proc["circle"] = frame
+
+            elif key == "sobel":
+                frame, params["sobel"] = self.imgproc.sobel(frame,params[key],show=False)
+                frame_proc["sobel"] = frame
+
+        frame_proc["final"] = frame
+
+        return frame_proc, circle, line
+
+    def threshold(self, img, params = None,  show = True):
         '''
         Threshold : setting threshold value
         :param img:
         :param show:
         :return:
         '''
+        if params is not None:
+            th_val, is_inv = params
+        else:
+            th_val, is_inv = self.var_binary.return_var()
 
-        th_val = self.var_binary.return_var()
-        if th_val == 0 :
-            flag = cv.THRESH_BINARY+cv.THRESH_OTSU
 
+        if is_inv == 1:
+            flag = cv.THRESH_BINARY_INV
         else:
             flag = cv.THRESH_BINARY
 
+        if th_val == 0 :
+            flag = flag + cv.THRESH_OTSU
+
         if len(img.shape) == 3 :
             img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-
+        # print(flag)
         _, th = cv.threshold(img,th_val, 255, flag)
         if show == True:
             th_vis = deepcopy(th)
@@ -161,7 +252,7 @@ class Imageprocessing(object):
                 th_vis = cv.resize(th_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_binary.window_binary_name, th_vis)
 
-        return th, (th_val)
+        return th, (th_val, is_inv)
 
     def canny(self,img, show = True):
         '''

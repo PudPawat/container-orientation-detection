@@ -9,13 +9,16 @@ class TrackBar(object):
         def __init__(self, preset = None):
 
             if preset is not None:
-                self.binary_th1 = preset
+                self.binary_th1, self.binary_inv = preset
             else:
                 self.binary_th1 = 10
+                self.binary_inv = 0
 
             self.window_binary_name = 'binary'
             self.binary_th1_name = 'th1'
             self.binary_th_max = 500
+
+            self.binary_inv_name = 'inverse'
 
             # binary
             # cv.namedWindow(self.window_binary_name, cv.WINDOW_AUTOSIZE)
@@ -26,14 +29,21 @@ class TrackBar(object):
                               self.binary_th_max,
                               self.on_binary_th1)
 
+            cv.createTrackbar(self.binary_inv_name, self.window_binary_name, self.binary_inv,
+                              1,
+                              self.on_binary_inv)
+
         # binary
         def on_binary_th1(self, val):
             self.binary_th1 = val
             cv.setTrackbarPos(self.binary_th1_name, self.window_binary_name, self.binary_th1)
 
+        def on_binary_inv(self, val):
+            self.binary_inv = val
+            cv.setTrackbarPos(self.binary_inv_name, self.window_binary_name, self.binary_inv)
 
         def return_var(self):
-            return self.binary_th1
+            return self.binary_th1, self.binary_inv
 
 
     class Canny(object):
