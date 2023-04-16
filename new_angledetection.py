@@ -45,9 +45,11 @@ class OrientationDetectionv2():
         self.resize_ratio = self.opt.resize_ratio
         self.threshold = self.opt.inverse_threshold.lower() in ("yes", "true", "t", "1")
         self.n_symetric = self.opt.n_symetric
+        self.method = self.opt.method
         self.read = read_save()
         self.path_ref = path_ref
         self.ref_names = os.listdir(self.path_ref)
+
         print(self.ref_names)
 
         self.FeatureCompare = FeatureVisualizationModule()
@@ -188,7 +190,7 @@ class OrientationDetectionv2():
 
     def main_simple(self,img, class_name):
         '''
-
+        process (CV algorithm HSV, dilate, etc) > warp polar (linear_process) > contour >
         :param img:
         :return:
         '''
@@ -260,7 +262,6 @@ class OrientationDetectionv2():
 
         img, linear_bi_img = warp_polar(img_result, (xc, yc, r))
         if self.threshold:
-            print("inverse")
             _, linear_bi_img = cv2.threshold(linear_bi_img, 0, 255, cv2.THRESH_BINARY_INV)
 
         cv2.imshow("test", linear_bi_img)
@@ -291,16 +292,6 @@ class OrientationDetectionv2():
                     cv2.imwrite("debug_imgs/{}_{}result_img_crop_platform.jpg".format(class_name,self.process_order), img_crop_platform)
                     cv2.imwrite("debug_imgs/{}_{}result.jpg".format(class_name,self.process_order), result)
                     self.process_order +=1
-
-
-
-        # try:
-        #     _, contours, _ = cv2.findContours(img_result, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        # except:
-        #     _, contours = cv2.findContours(img_result, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-
-
 
     def main_compare(self,img, class_name):
         '''
@@ -460,7 +451,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230318"
+    path_imgs = "dataset/20230311"
     names = os.listdir(path_imgs)
 
     for name in names:
@@ -469,9 +460,17 @@ if __name__ == '__main__':
         img = cv2.imread(img_path)
 
         class_name = name.split("_")[0]
-        detect = OrientationDetectionv2("dataset/20230318",json_path = "config/notchv2_config_{}.json".format(class_name))
-        # detect.main_compare(img, class_name)
-        # detect.main_simple(img, class_name)
-        detect.main_simple_for_tiny(img, class_name)
-        # detect.main_compare1(img, class_nam         detect.main_compare_with_process(img, class_name)
+        detect = OrientationDetectionv2(path_imgs,json_path = "config/notchv2_config_{}.json".format(class_name))
+
+        if detect.method == "tiny":
+            detect.main_simple_for_tiny(img, class_name)
+        elif detect.method == "simple":
+            detect.main_simple(img, class_name)
+        elif detect.method == "compare":
+            detect.main_compare(img, class_name)
+        elif detect.method == "compare1":
+            detect.main_compare1(img, class_name)
+        else:
+            print("No method selected")
+        # detect.main_compare_with_process(img, class_name)
         # cv2.waitKey(0)

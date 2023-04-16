@@ -11,6 +11,8 @@ or
 pip3 install -r requiremtnt.txt
 ```
 
+## SETUP 
+
 
 ## APPLICATION AND EXPLAINATION 
 this code is to classification compareimg.py by easily using by put a reference images into a folder

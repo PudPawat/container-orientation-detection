@@ -1,1 +1,52 @@
-{"params": {"HSV": [0, 0, 55, 180, 255, 255], "gaussianblur": [1, 1], "dilate": [5, 0], "erode": [15, 0]}, "debug": "True", "show_result": "True", "flag_rotate": "None", "resize_ratio": 0.3, "save_img": "True", "inverse_threshold": "True", "n_symetric": 1, "crop_circle_fix_inner_r": [535.3290060776296, 401.5800283374141, 213.3781654566391], "crop_circle_fix_outer_r": [537.9979685970582, 402.4270572144974, 248.532218565171], "crop_circle_platform": [537, 400, 391], "method_names": ["simple", "compare", "comparev2"], "method": ""}
+{
+  "params": {
+    "HSV": [
+      0,
+      0,
+      55,
+      180,
+      255,
+      255
+    ],
+    "gaussianblur": [
+      1,
+      1
+    ],
+    "dilate": [
+      5,
+      0
+    ],
+    "erode": [
+      15,
+      0
+    ]
+  },
+  "debug": "True",
+  "show_result": "True",
+  "flag_rotate": "None",
+  "resize_ratio": 0.3,
+  "save_img": "True",
+  "inverse_threshold": "True",
+  "n_symetric": 1,
+  "crop_circle_fix_inner_r": [
+    535.3290060776296,
+    401.5800283374141,
+    213.3781654566391
+  ],
+  "crop_circle_fix_outer_r": [
+    537.9979685970582,
+    402.4270572144974,
+    248.532218565171
+  ],
+  "crop_circle_platform": [
+    537,
+    400,
+    391
+  ],
+  "method_names": [
+    "simple",
+    "compare",
+    "comparev2"
+  ],
+  "method": "simple"
+}
