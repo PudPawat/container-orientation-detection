@@ -16,6 +16,12 @@ from utils import crop_circle, rotate_image, crop_circle_by_warp, fill_balck_cir
 
 ### simple_tiny
 from lib.custom_circle_detection import fit_circle_2d, get_x_y_from_contour
+try:
+    ### mac 
+    import faulthandler
+    faulthandler.enable()
+except:
+    pass
 
 
 def resize_scale(img, scale = 0.3):

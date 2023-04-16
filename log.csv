@@ -7,6 +7,8 @@ Time,Error_File,Error_Function,Error_Level,Error_Message
 [2023-03-13 18:59:01], [setting_params copy], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
 [2023-03-13 19:10:27], [setting_params copy], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
 [2023-03-13 19:10:43], [setting_params copy], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
+[2023-03-27 09:59:12], [/Users/pawat], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
+[2023-03-27 10:00:17], [/Users/pawat], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
 [2023-03-18 17:44:44], [setting_params copy], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
 [2023-03-18 17:47:23], [setting_params copy], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
 [2023-03-18 22:31:29], [setting_params copy], [__init__], [ERROR], config/main.json doesn't exist. Please, select the file again!
