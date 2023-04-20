@@ -22,7 +22,18 @@ config for algorithm: notchv2_config_S0000.json
 main.json for setting up conputer vision params
 
 ## SETUP 
-algorithm config setup 
+for each object name S0000 should have its own config file -> notchv2_config_S0000.json (S0000 is an example)
+So, the purpose of the setup is to set this config file completely. 
+
+
+#### let's look into the file
+
+
+algorithm config setup : below is a sample of JSON file which needed to set the step is following this.
+
+- 1.) put the images in any folder you want with the correct format S0000_0.jpg 
+- 2.) check [SETTING_PARAMS_DOC](SETTING_PARAMS_DOC.md) to run setting_params.py or setting_params copy.py which you need to check main.json details [SETTING_PARAMS_DOC](SETTING_PARAMS_DOC.md)"SETTING_PARAMS_DOC.md"
+- 3.) to set up check [set_circle](SET_CIRCL.md) circle_fix_outer_r", "crop_circle_fix_inner_r", "crop_circle_platform"
 
 ```
 {
@@ -84,33 +95,12 @@ and the class has notch can the detect angle of the object
 ![alt text](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/EX3.PNG?raw=true)
 
 
-## Add detect notch from a CLASS
+to run the file
 
-- add notch_config_{class}.json # with all setting
-- go to comaprimg.py 
-- find the code below
-orientation_detection_A repersent a setting notch of class A
-orientation_detection_B repersent a setting notch of class B
+RUN new_algorithm.py 
 
-```
-### fill the other object
-    orientation_detection_A = OrientationDetection( path=os.path.join(folder, names[i]), json_path="config/notch_config_A.json")
-    ## EX
-    orientation_detection_B = OrientationDetection( path=os.path.join(folder, names[i]), json_path="config/notch_config_B.json")
-```
-#### Attribute explaintion 
-path = "path to image background"
-json_path = "config/notch_config_A.json" # setting path in config see setting in config
+you can set image directory to test on the line which has path_imgs = ".." 
+and replace the path in on .. 
 
-- and add if condition like the code below
-the code be low show adding a class B 
-```
-        ### Example
-        elif name_class == "B":
-            angle = orientation_detection_B.detect(img1)
-            if angle is not None:
-                result = cv2.putText(img1, "ANGLE: {}".format(str("%.2f" % round(angle, 2))),
-                                     (0, img1.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 8, (0, 50, 255), 8)
-
-                cv2.namedWindow("RESULT", cv2.WINDOW_NORMAL)
-                cv2.imshow("RESULT", result)
+you can test the algorithm on the path "dataset/20230311" if all the config havn't been deleted on the local machine\
+it should be able to run without error on every image in the directory. 
