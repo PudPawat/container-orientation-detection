@@ -32,7 +32,7 @@ So, the purpose of the setup is to set this config file completely.
 algorithm config setup : below is a sample of JSON file which needed to set the step is following this.
 
 - 1.) put the images in any folder you want with the correct format S0000_0.jpg 
-- 2.) check [SETTING_PARAMS_DOC]([SETTING_PARAMS_DOC.md](https://github.com/PudPawat/container-orientation-detection/blob/main/2_SETTING_PARAMS_DOC.md)) to run setting_params.py or setting_params copy.py which you need to check main.json details [SETTING_PARAMS_DOC]([SETTING_PARAMS_DOC.md](https://github.com/PudPawat/container-orientation-detection/blob/main/2_SETTING_PARAMS_DOC.md))"SETTING_PARAMS_DOC.md"
+- 2.) check [SETTING_PARAMS_DOC](https://github.com/PudPawat/container-orientation-detection/blob/main/2_SETTING_PARAMS_DOC.md) to run setting_params.py or setting_params copy.py which you need to check main.json details [SETTING_PARAMS_DOC](https://github.com/PudPawat/container-orientation-detection/blob/main/2_SETTING_PARAMS_DOC.md) "SETTING_PARAMS_DOC.md"
 - 3.) to set up check [set_circle](SET_CIRCL.md) circle_fix_outer_r", "crop_circle_fix_inner_r", "crop_circle_platform"
 
 ```
