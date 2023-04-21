@@ -97,7 +97,7 @@ and the class has notch can the detect angle of the object
 
 to run the file
 
-RUN new_algorithm.py 
+## RUN new_algorithm.py 
 
 you can set image directory to test on the line which has path_imgs = ".." 
 and replace the path in on .. 
