@@ -38,7 +38,7 @@ these's only used for our algorithm
 then go to setting up the parameters 
 I suggest to visit this/
 
-![Watch the video](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/EX3.PNG?raw=true)(https://drive.google.com/file/d/14nNEcNqJ4s8NHQkEZMCcJOjjBIxKbBbl/view?usp=sharing)
+![Watch the video](https://drive.google.com/file/d/14nNEcNqJ4s8NHQkEZMCcJOjjBIxKbBbl/view?usp=sharing)
 https://drive.google.com/file/d/14nNEcNqJ4s8NHQkEZMCcJOjjBIxKbBbl/view?usp=sharing
 #### command in UI \
 Press A to update to parameters\ 
