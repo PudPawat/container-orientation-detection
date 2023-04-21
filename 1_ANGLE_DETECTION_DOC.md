@@ -33,8 +33,8 @@ algorithm config setup : below is a sample of JSON file which needed to set the 
 
 - 1.) put the images in any folder you want with the correct format S0000_0.jpg 
 - 2.) check [SETTING_PARAMS_DOC](https://github.com/PudPawat/container-orientation-detection/blob/main/2_SETTING_PARAMS_DOC.md) to run setting_params.py or setting_params copy.py which you need to check main.json details [SETTING_PARAMS_DOC](https://github.com/PudPawat/container-orientation-detection/blob/main/2_SETTING_PARAMS_DOC.md) "SETTING_PARAMS_DOC.md"
-- 3.) to set up check [set_circle](SET_CIRCL.md) circle_fix_outer_r", "crop_circle_fix_inner_r", "crop_circle_platform"
-
+- 3.) to set up check [set_circle](3_SET_CIRCL.md) circle_fix_outer_r", "crop_circle_fix_inner_r", "crop_circle_platform"
+- 4.) setup the algorithm 1. "tiny" is for detecting tiny part 2. "simple" algotithm . 3. and 4. rarely use
 ```
 {
   "params": {

@@ -40,6 +40,8 @@ I suggest to visit this/
 
 ![Watch the video](https://github.com/PudPawat/container-orientation-detection/blob/main/info_image/EX3.PNG?raw=true)(https://drive.google.com/file/d/14nNEcNqJ4s8NHQkEZMCcJOjjBIxKbBbl/view?usp=sharing)
 https://drive.google.com/file/d/14nNEcNqJ4s8NHQkEZMCcJOjjBIxKbBbl/view?usp=sharing
+
+see more details https://docs.google.com/document/d/1szQmotkCh7ohC_64nXKTcr0Ttbz6_SV4jJaD74pe12c/edit?usp=sharing
 #### command in UI \
 Press A to update to parameters\ 
 Press S to save\
