@@ -127,8 +127,9 @@ class Imageprocessing(object):
 
         if len(img.shape) == 3 :
             img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-
+        print(th_val)
         _, th = cv.threshold(img,th_val, 255, flag)
+
         if show == True:
             cv.imshow("window_thresh", th)
 

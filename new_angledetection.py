@@ -383,7 +383,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230318"
+    path_imgs = "dataset/test_wade"
     names = os.listdir(path_imgs)
 
     for name in names:
@@ -392,7 +392,7 @@ if __name__ == '__main__':
         img = cv2.imread(img_path)
 
         class_name = name.split("_")[0]
-        detect = OrientationDetectionv2("dataset/20230318",json_path = "config/notchv2_config_{}.json".format(class_name))
+        detect = OrientationDetectionv2(path_imgs,json_path = "config/notchv2_config_{}.json".format(class_name))
         # detect.main_compare(img, class_name)
         detect.main_simple(img, class_name)
         # detect.main_compare1(img, class_nam         detect.main_compare_with_process(img, class_name)
