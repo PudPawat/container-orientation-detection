@@ -1,6 +1,7 @@
 {
-  "folder_ref": "dataset\\class_registeration",
-  "debug": "True",
+  "folder_ref": "F:\\Ph.D\\circle_classification\\Images_all_class\\0_all_class_aug",
+  "folder_ref1": "dataset\\class_registeration",
+  "debug": "False",
   "crop_circle_platform": [546.1550518881522, 421.04824877486305, 375],
   "resize_ratio": 0.3
 }

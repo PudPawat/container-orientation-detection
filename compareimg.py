@@ -117,13 +117,14 @@ class FeatureVisualization():
 
     def get_imgs_in_ref_score(self):
         names_result = {}
+        print("self.names_ref",self.names_ref)
         for j in range(len(self.names_ref)):
             img2 = cv2.imread(os.path.join(self.opt.folder_ref, self.names_ref[j]))
             print("0")
             # imgasvar = featureVis.preprocess_image(img2)
             self.set_index(j)
             outputs2 = self.get_fc_feature(img2)
-            self.plot_probablity(outputs2)
+            # self.plot_probablity(outputs2)
 
             names_result[self.names_ref[j]] = outputs2
 
@@ -133,7 +134,7 @@ class FeatureVisualization():
 
     # @staticmethod
     def preprocess_image(self, cv2im, resize_im=True):
-
+        print(len(cv2im))
         # Resize image
         if resize_im:
             cv2im = cv2.resize(cv2im, (224, 224))
@@ -288,8 +289,10 @@ class FeatureVisualization():
 if __name__ == '__main__':
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\Darker - Exposure time 120000us close some ambient light"
     folder = "dataset\class_registeration"
+    folder = "F:\Ph.D\circle_classification\Images_all_class\\0_all_class"
     folder_ref = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\\light2_class"
     folder_ref = "dataset\class_registeration"
+    folder_ref = "F:\Ph.D\circle_classification\Images_all_class\0_all_class_aug"
 
     names = os.listdir(folder)
     names_ref = os.listdir(folder_ref)
@@ -323,23 +326,24 @@ if __name__ == '__main__':
 
         if name_class == "A":
             print(img1.shape)
-            angle = orientation_detection_A.detect(img1)
-            if angle is not None:
-                result = cv2.putText(img1, "ANGLE: {}".format(str("%.2f" % round(angle, 2))),
-                                     (0, img1.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 8, (0, 50, 255), 8)
-
-                cv2.namedWindow("RESULT", cv2.WINDOW_NORMAL)
-                cv2.imshow("RESULT", result)
+            # angle = orientation_detection_A.detect(img1)
+            # if angle is not None:
+            #     result = cv2.putText(img1, "ANGLE: {}".format(str("%.2f" % round(angle, 2))),
+            #                          (0, img1.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 8, (0, 50, 255), 8)
+            #
+            #     cv2.namedWindow("RESULT", cv2.WINDOW_NORMAL)
+            #     cv2.imshow("RESULT", result)
 
         ### Example
         elif name_class == "B":
-            angle = orientation_detection_B.detect(img1)
-            if angle is not None:
-                result = cv2.putText(img1, "ANGLE: {}".format(str("%.2f" % round(angle, 2))),
-                                     (0, img1.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 8, (0, 50, 255), 8)
-
-                cv2.namedWindow("RESULT", cv2.WINDOW_NORMAL)
-                cv2.imshow("RESULT", result)
+            pass
+            # angle = orientation_detection_B.detect(img1)
+            # if angle is not None:
+            #     result = cv2.putText(img1, "ANGLE: {}".format(str("%.2f" % round(angle, 2))),
+            #                          (0, img1.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 8, (0, 50, 255), 8)
+            #
+            #     cv2.namedWindow("RESULT", cv2.WINDOW_NORMAL)
+            #     cv2.imshow("RESULT", result)
 
         all_result.append(result)
 
