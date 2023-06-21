@@ -205,11 +205,31 @@ class FeatureVisualization():
         # self.plot_probablity(outputs)
         return outputs
 
-    def compare_cosine(self, out1, out2):
-        metric = 'cosine'
+    def compare_cosine(self, out1, out2, metric = None):
+
+        '''
+        metric = 'braycurtis', 'canberra', 'chebyshev', 'cityblock', 'correlation',
+        'cosine', 'dice', 'euclidean', 'hamming', 'jaccard', 'jensenshannon',
+        'kulsinski', 'mahalanobis', 'matching', 'minkowski', 'rogerstanimoto',
+        'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath',
+        'sqeuclidean', 'wminkowski', 'yule'.
+        :param out1:
+        :param out2:
+        :return:
+        '''
+        if metric == None:
+            metric = 'cosine'
+
         out1 = out1.cpu()
         out2 = out2.cpu()
         cosineDistance = distance.cdist(out1, out2, metric)[0]
+        return cosineDistance
+
+    def compare_cosine_all(self, out1, out2):
+        metric = 'cosine'
+        out1 = out1.cpu()
+        out2 = out2.cpu()
+        cosineDistance = distance.cdist(out1, out2, metric)
         return cosineDistance
 
 
@@ -226,6 +246,9 @@ class FeatureVisualization():
         for j, name in enumerate(self.names_result.keys()):
             dis = self.compare_cosine(outputs1, self.names_result[name])
             result.append(dis[0])
+            dis_all = self.compare_cosine(outputs1, self.names_result[name])
+            print("dis_all: ", dis_all)
+
 
 
         # # --- old core before optimize ---
@@ -275,9 +298,9 @@ if __name__ == '__main__':
 
 
     ### fill the other object
-    orientation_detection_A = OrientationDetection( path=os.path.join(folder, names[i]), json_path="config/notch_config_A.json")
-    ## EX
-    orientation_detection_B = OrientationDetection( path=os.path.join(folder, names[i]), json_path="config/notch_config_B.json")
+    # orientation_detection_A = OrientationDetection( path=os.path.join(folder, names[i]), json_path="config/notch_config_A.json")
+    # ## EX
+    # orientation_detection_B = OrientationDetection( path=os.path.join(folder, names[i]), json_path="config/notch_config_B.json")
 
 
 

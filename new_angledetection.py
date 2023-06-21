@@ -95,6 +95,7 @@ class OrientationDetectionv2():
         :return:
         '''
         img, warp = warp_polar(img, self.circle_outer_r)
+        print(img.shape, warp.shape)
         img_linear_crop = warp[0: warp.shape[0], int(self.circle_inner_r[-1]):warp.shape[1]]
         if self.debug:
             cv2.imshow("warp_outer", warp)
@@ -457,7 +458,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230311"
+    path_imgs = "dataset/20230423"
     names = os.listdir(path_imgs)
 
     for name in names:
