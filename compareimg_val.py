@@ -38,7 +38,7 @@ def preprocess( img, crop_circle, resize_ratio = 0.3):
     return reversed_warp
 
 class FeatureVisualization():
-    def __init__(self, index=0, selected_layer=0, model = "alexnet", json_path = "config/classification.json"):
+    def __init__(self, index=0, selected_layer=0, model = "vgg", json_path = "config/classification.json", features_path = ""):
 
 
         try:
@@ -61,8 +61,8 @@ class FeatureVisualization():
         self.index = index
         # self.img_path = img_path
         self.selected_layer = selected_layer
-
-        if model == "vgg":
+        self.modelnames = ["vgg16","mobilenet_v2","densenet121","densenet121","densenet201","resnext50_32x4d","vgg19","alexnet","squeezenet1_1","mnasnet1_0"]
+        if model == "vgg16":
             # Load pretrained model
             self.pretrained_model = models.vgg16(pretrained=True)
             # print(self.pretrained_model)
@@ -113,15 +113,26 @@ class FeatureVisualization():
             self.pretrained_model.to(torch.device("cuda:0"))
             self.pretrained_model2.to(torch.device("cuda:0"))
 
-        self.get_imgs_in_ref_score()
 
-        features_result_path = "./config/features_result.json"
 
-        print(self.names_result_save)
-        with open(features_result_path, 'w') as file:
-            json.dump(self.names_result_save, file)
+        try:
+            # Read the JSON file
+            with open(features_path, "r") as file:
+                json_data = file.read()
+            # Parse the JSON data into a dictionary
+            self.names_result = json.loads(json_data)
+            print("READ feature file successfully ")
 
-        print("Dictionary saved as JSON successfully.")
+
+        except:
+
+            self.get_imgs_in_ref_score()
+            features_result_path = f"./config/features_result_{model}.json"
+            print(self.names_result_save)
+            with open(features_result_path, 'w') as file:
+                json.dump(self.names_result_save, file)
+
+            print("Dictionary saved as JSON successfully.")
 
     def get_imgs_in_ref_score(self):
         names_result = {}
@@ -135,17 +146,17 @@ class FeatureVisualization():
             outputs2 = self.get_fc_feature(img2)
             # self.plot_probablity(outputs2)
 
-            names_result[self.names_ref[j]] = outputs2
+            # names_result[self.names_ref[j]] = outputs2
             names_result_save[self.names_ref[j]] = outputs2.cpu().tolist()
 
-        self.names_result = names_result
         self.names_result_save = names_result_save
+        self.names_result = names_result_save
 
         return names_result
 
     # @staticmethod
     def preprocess_image(self, cv2im, resize_im=True):
-        print(len(cv2im))
+        # print(len(cv2im))
         # Resize image
         if resize_im:
             cv2im = cv2.resize(cv2im, (224, 224))
@@ -229,11 +240,23 @@ class FeatureVisualization():
         :param out2:
         :return:
         '''
-        if metric == None:
+        metric_list = ['braycurtis', 'canberra', 'chebyshev', 'cityblock', 'correlation',
+        'cosine', 'dice', 'euclidean', 'hamming', 'jaccard', 'jensenshannon',
+        'kulsinski', 'mahalanobis', 'matching', 'minkowski', 'rogerstanimoto',
+        'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath',
+        'sqeuclidean', 'wminkowski', 'yule']
+        if metric not in metric_list:
             metric = 'cosine'
 
-        out1 = out1.cpu()
-        out2 = out2.cpu()
+        try:
+            out1 = out1.cpu()
+        except:
+            out1 = out1
+
+        try:
+            out2 = out2.cpu()
+        except:
+            out2 = out2
         cosineDistance = distance.cdist(out1, out2, metric)[0]
         return cosineDistance
 
@@ -245,46 +268,33 @@ class FeatureVisualization():
         return cosineDistance
 
 
-    def get_similar_img(self, img1):
+    def get_similar_img(self, img1, metric = ""):
+        '''
+        to get similar image
+        :param img1:
+        :return:
+        '''
         if self.debug:
             cv2.putText(img1, "INPUT", (0, img1.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 3, (200, 200, 0), 3)
             cv2.imshow("1", img1)
         # imgasvar = self.preprocess_image(img1)
         outputs1 = self.get_fc_feature(img1)
-        print("outputs1", outputs1)
+        # print("outputs1", outputs1)
         self.plot_probablity(outputs1)
-        print("outputs1", outputs1)
+        # print("outputs1", outputs1)
         result = []
         for j, name in enumerate(self.names_result.keys()):
-            dis = self.compare_cosine(outputs1, self.names_result[name])
+            dis = self.compare_cosine(outputs1, self.names_result[name],metric = metric)
             result.append(dis[0])
-            dis_all = self.compare_cosine(outputs1, self.names_result[name])
-            print("dis_all: ", dis_all)
-
-
-
-        # # --- old core before optimize ---
-        # for j in range(len(self.names_ref)):
-        #     img2 = cv2.imread(os.path.join(self.opt.folder_ref, self.names_ref[j]))
-        #
-        #     # imgasvar = self.preprocess_image(img2)
-        #     self.set_index(j)
-        #     t0 = time.time()
-        #     outputs2 = self.get_fc_feature(img2)
-        #     print("get_fc_feature", time.time() - t0)
-        #
-        #     t1 = time.time()
-        #     self.plot_probablity(outputs2)
-        #
-        #     dis = self.compare_cosine(outputs1, outputs2)
-        #     print("compare_cosine", time.time() - t1)
-        #     cv2.waitKey(1)
-        #
-        #     result.append(dis[0])
+            dis_all = self.compare_cosine(outputs1, self.names_result[name],metric = metric )
+            print(name, "dis_all: ", dis_all)
 
         result_array = np.asarray(result)
         ind = np.argmin(result_array)
-        class_obj = self.names_ref[ind].split("_")[0]
+        try:
+            class_obj = self.names_ref[ind].split("_")[0]
+        except:
+            class_obj = self.names_ref[ind]
         print("The class is {}".format(class_obj))
         # print(os.path.join(self.folder_ref, self.names_ref[ind]))
         answer = cv2.imread(os.path.join(self.folder_ref, self.names_ref[ind]))
@@ -322,34 +332,59 @@ if __name__ == '__main__':
         resize = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
         return resize
 
+    def test_model_and_acc(model = "" ,metric = ""):
+        fea_path = f"config/features_result_{model}.json"
+        featureVis = FeatureVisualization(model = model, features_path= fea_path)
+        all_result = []
+        cv2.namedWindow("1",cv2.WINDOW_NORMAL)
+        cv2.namedWindow("answer_class",cv2.WINDOW_NORMAL)
+        val_result = []
+        for i in range(len(names)):
+            result = []
+            img1 = cv2.imread(os.path.join(folder, names[i]))
+            # img1 = preprocess(img1, orientation_detection_A.crop_circle_platform)
+            # img1 = cv2.rotate(img1,cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-    featureVis = FeatureVisualization()
-    all_result = []
-    cv2.namedWindow("1",cv2.WINDOW_NORMAL)
-    cv2.namedWindow("answer_class",cv2.WINDOW_NORMAL)
-    val_result = []
-    for i in range(len(names)):
-        result = []
-        img1 = cv2.imread(os.path.join(folder, names[i]))
-        # img1 = preprocess(img1, orientation_detection_A.crop_circle_platform)
-        # img1 = cv2.rotate(img1,cv2.ROTATE_90_COUNTERCLOCKWISE)
+            name_class = featureVis.get_similar_img(img1, metric= metric)
 
-        name_class = featureVis.get_similar_img(img1)
-
-        if name_class in names[i]:
-            val_result.append(True)
-        else:
-            val_result.append(False)
-
-
-        all_result.append(result)
-
-    count_true = val_result.count(True)
-
-    print(str(count_true/ len(val_result) *100) + "% accuracy")
+            if name_class in names[i]:
+                val_result.append(True)
+            else:
+                val_result.append(False)
 
 
-    # print(all_result)
-    # df = pd.DataFrame(all_result, columns= names_ref)
-    # print(df)
-    # df.to_csv("result.csv")
+            all_result.append(result)
+
+        count_true = val_result.count(True)
+
+        acc = (count_true/ len(val_result)) *100
+
+        print(str(acc) + "% accuracy")
+
+        return  acc
+
+    modelnames = ["mobilenet_v2", "densenet121", "densenet121", "densenet201", "resnext50_32x4d",
+                       "vgg19", "alexnet", "squeezenet1_1", "mnasnet1_0"]
+    ''' metric = 'braycurtis', 'canberra', 'chebyshev', 'cityblock', 'correlation',
+        'cosine', 'dice', 'euclidean', 'hamming', 'jaccard', 'jensenshannon',
+        'kulsinski', 'mahalanobis', 'matching', 'minkowski', 'rogerstanimoto',
+        'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath',
+        'sqeuclidean', 'wminkowski', 'yule'.'''
+    metric = "euclidean"
+
+    model_result = {}
+    featureVis = FeatureVisualization(features_path="config/features_result.json")
+    model_result["dataset"] = featureVis.folder_ref
+    for modelname in modelnames:
+        print("model: ", modelname)
+        acc = test_model_and_acc(model = modelname, metric = metric)
+        model_result[modelname] = acc
+
+        print(model_result)
+
+
+
+    with open(f"model_resul_{metric}t.json", "w") as file:
+        json.dump(model_result, file)
+    print("READ feature file successfully ")
+

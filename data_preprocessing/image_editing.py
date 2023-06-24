@@ -100,5 +100,3 @@ if __name__ == '__main__':
                     shadow_adjusted = adjust_shadows(image, value)
                     suffix = "shallow_" + str(value) + ".png"
                     cv2.imwrite(os.path.join(save_path, file_name_without_extension + suffix),shadow_adjusted)
-
-
