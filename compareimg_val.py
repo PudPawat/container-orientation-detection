@@ -57,6 +57,7 @@ class FeatureVisualization():
             raise
         self.debug = self.opt.debug.lower() in ("yes", "true", "t", "1")
         self.circle_platfrom = self.opt.crop_circle_platform
+        self.crop_circle = self.opt["crop_circle"].lower() in ["t", "true", "True"]
 
         self.index = index
         # self.img_path = img_path
@@ -114,7 +115,7 @@ class FeatureVisualization():
             self.pretrained_model2.to(torch.device("cuda:0"))
 
 
-
+        ## initialize the data
         try:
             # Read the JSON file
             with open(features_path, "r") as file:
@@ -134,12 +135,22 @@ class FeatureVisualization():
 
             print("Dictionary saved as JSON successfully.")
 
+
     def get_imgs_in_ref_score(self):
         names_result = {}
         names_result_save = {}
         print("self.names_ref",self.names_ref)
+
+        key = 0
         for j in range(len(self.names_ref)):
             img2 = cv2.imread(os.path.join(self.opt.folder_ref, self.names_ref[j]))
+
+            if self.crop_circle is True:
+
+                img2 = preprocess(img2, self.circle_platfrom, resize_ratio= 0.3)
+
+            cv2.imshow("see_crop", img2)
+            key = cv2.waitKey(int(key))
             # print("0")
             # imgasvar = featureVis.preprocess_image(img2)
             self.set_index(j)
@@ -332,7 +343,7 @@ if __name__ == '__main__':
         resize = cv2.resize(img, (int(img.shape[1] * scale), int(img.shape[0] * scale)))
         return resize
 
-    def test_model_and_acc(model = "" ,metric = ""):
+    def test_model_and_acc(model = "" ,metric = "", crop_circle = []):
         fea_path = f"config/features_result_{model}.json"
         featureVis = FeatureVisualization(model = model, features_path= fea_path)
         all_result = []
@@ -342,6 +353,7 @@ if __name__ == '__main__':
         for i in range(len(names)):
             result = []
             img1 = cv2.imread(os.path.join(folder, names[i]))
+            img1 = preprocess(img1, featureVis.circle_platfrom)
             # img1 = preprocess(img1, orientation_detection_A.crop_circle_platform)
             # img1 = cv2.rotate(img1,cv2.ROTATE_90_COUNTERCLOCKWISE)
 
@@ -384,7 +396,7 @@ if __name__ == '__main__':
 
 
 
-    with open(f"model_resul_{metric}t.json", "w") as file:
+    with open(f"model_result_{metric}.json", "w") as file:
         json.dump(model_result, file)
     print("READ feature file successfully ")
 
