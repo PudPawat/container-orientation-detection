@@ -1,10 +1,11 @@
 {
   "basic": {
-    "source": "dataset\\20230318",
+    "source": "dataset\\20230423",
     "resize": "False",
     "camera_config": "config/camera_config/a2A2590-60ucPRO_40065215.pfs",
     "process_name": ["erode","sharp","blur","gaussianblur","thresh","line","HSV","dilate","canny","circle","sobel","barrel_distort","crop","contour_area"],
-    "process": ["crop","barrel_distort","HSV","erode","dilate","contour_area","thresh"],
+    "process": ["crop","HSV","erode","dilate","contour_area","thresh"],
+    "process_backup": ["crop","barrel_distort","HSV","erode","dilate","contour_area","thresh"],
     "config_path": "./config/",
     "config_name_format": "notchv2_config_",
     "params_temp": "config/params.json"
