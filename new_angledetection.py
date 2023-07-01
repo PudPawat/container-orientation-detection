@@ -83,6 +83,7 @@ class OrientationDetectionv2():
         result, _, _ = self.read.read_params(self.params,img)
         img_result = result["final"]
         cv2.imshow("result",img_result)
+        cv2.imwrite("debug_imgs/result.jpg", img_result)
         img_result = cv2.resize(img_result, (int(img.shape[1] * self.resize_ratio), int(img.shape[0] * self.resize_ratio)))
         cv2.waitKey(0)
         img_linear_crop = self.crop_roi(img_result)
@@ -222,6 +223,7 @@ class OrientationDetectionv2():
             cv2.putText(result, str(angle),(0, img_crop_platform.shape[0]),cv2.FONT_HERSHEY_COMPLEX,3,(255,0,0),2)
             print(angle)
             cv2.imshow("result_1",result)
+            cv2.imwrite("debug_imgs/result.jpg",result)
             if self.debug:
                 for _,_, contour in area_contours:
                     cv2.drawContours(linear_bi_img_BGR,[contour],-1, (255,0,0),3)
@@ -457,7 +459,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230311"
+    path_imgs = "dataset/test_wade"
     names = os.listdir(path_imgs)
 
     for name in names:
