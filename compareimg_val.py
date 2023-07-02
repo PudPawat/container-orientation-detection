@@ -122,6 +122,7 @@ class FeatureVisualization():
                 json_data = file.read()
             # Parse the JSON data into a dictionary
             self.names_result = json.loads(json_data)
+            self.names_ref = list(self.names_result.keys())
             print("READ feature file successfully ")
 
 
@@ -302,6 +303,8 @@ class FeatureVisualization():
 
         result_array = np.asarray(result)
         ind = np.argmin(result_array)
+        print(self.names_ref)
+        print(ind)
         try:
             class_obj = self.names_ref[ind].split("_")[0]
         except:
@@ -355,15 +358,11 @@ class FeatureVisualization():
 
             result_array[ind] = 999
 
-
-
-
-
-        print("The class is {}".format(class_obj))
+        print("The class is {}".format(n_result[-1]))
         # print(os.path.join(self.folder_ref, self.names_ref[ind]))
         answer = cv2.imread(os.path.join(self.folder_ref, self.names_ref[n_ind_result[0]]))
         if self.debug:
-            cv2.putText(answer, "ANSWER {}".format(str(class_obj)), (0, answer.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 3.5, (50, 0, 200), 3)
+            cv2.putText(answer, "ANSWER {}".format(str(n_result[-1])), (0, answer.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 3.5, (50, 0, 200), 3)
             cv2.imshow("answer_class", answer)
             cv2.waitKey(0)
 
@@ -373,11 +372,13 @@ class FeatureVisualization():
 
 if __name__ == '__main__':
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\Darker - Exposure time 120000us close some ambient light"
-    folder = "dataset\class_registeration"
     folder = "F:\Ph.D\circle_classification\Images_all_class\\0_all_class"
+    folder = "dataset\class_registeration"
+    folder = "dataset\\20230311"
     folder_ref = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\\light2_class"
-    folder_ref = "dataset\class_registeration"
     folder_ref = "F:\Ph.D\circle_classification\Images_all_class\\0_all_class_aug"
+    folder_ref = "dataset\class_registeration"
+    folder_ref = "dataset\\20230311"
 
     names = os.listdir(folder)
     names_ref = os.listdir(folder_ref)
@@ -422,7 +423,7 @@ if __name__ == '__main__':
         print(str(acc) + "% accuracy")
         return  acc
 
-    def test_an_image(img, model = model):
+    def test_an_image(img, model = None):
 
         fea_path = f"config/features_result_{model}.json"
         featureVis = FeatureVisualization(model = model, features_path= fea_path)
