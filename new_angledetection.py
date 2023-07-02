@@ -460,11 +460,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    path_imgs = "dataset/test_wade"
-=======
     path_imgs = "dataset/20230423"
->>>>>>> 193ad781618f121c0ee568e08dde6e4e8ddbbdc5
     names = os.listdir(path_imgs)
 
     for name in names:
