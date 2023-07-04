@@ -6,41 +6,63 @@ class TrackBar(object):
         pass
 
     class Binary(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.binary_th1, self.binary_inv = preset
+            else:
+                self.binary_th1 = 10
+                self.binary_inv = 0
+
             self.window_binary_name = 'binary'
-            self.binary_th_max = 500
-            self.binary_th1 = 10
             self.binary_th1_name = 'th1'
+            self.binary_th_max = 500
+
+            self.binary_inv_name = 'inverse'
 
             # binary
-            cv.namedWindow(self.window_binary_name, cv.WINDOW_AUTOSIZE)
+            # cv.namedWindow(self.window_binary_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_binary_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_binary_name, 500, 200)
 
             cv.createTrackbar(self.binary_th1_name, self.window_binary_name, self.binary_th1,
                               self.binary_th_max,
                               self.on_binary_th1)
 
+            cv.createTrackbar(self.binary_inv_name, self.window_binary_name, self.binary_inv,
+                              1,
+                              self.on_binary_inv)
+
         # binary
         def on_binary_th1(self, val):
             self.binary_th1 = val
             cv.setTrackbarPos(self.binary_th1_name, self.window_binary_name, self.binary_th1)
 
+        def on_binary_inv(self, val):
+            self.binary_inv = val
+            cv.setTrackbarPos(self.binary_inv_name, self.window_binary_name, self.binary_inv)
 
         def return_var(self):
-            return self.binary_th1
+            return self.binary_th1, self.binary_inv
 
 
     class Canny(object):
 
-        def __init__(self):
-            self.canny_max = 3000
-            self.Y_canny = 10
-            self.X_canny = 10
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.Y_canny, self.X_canny = preset
+            else:
+                self.Y_canny = 10
+                self.X_canny = 10
+
             self.window_canny_name = 'Canny'
             self.Y_canny_name = 'Y_Canny'
             self.X_canny_name = 'X_Canny'
+            self.canny_max = 3000
 
-            cv.namedWindow(self.window_canny_name, cv.WINDOW_AUTOSIZE)
+            # cv.namedWindow(self.window_canny_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_canny_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_canny_name, 500, 200)
 
             cv.createTrackbar(self.X_canny_name, self.window_canny_name, self.X_canny,
@@ -63,15 +85,21 @@ class TrackBar(object):
 
     class Canny1(object):
 
-        def __init__(self):
-            self.canny_max = 3000
-            self.Y_canny = 10
-            self.X_canny = 10
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.Y_canny, self.X_canny = preset
+            else:
+                self.Y_canny = 10
+                self.X_canny = 10
+
             self.window_canny_name = 'Canny_1'
             self.Y_canny_name = 'Y_Canny'
             self.X_canny_name = 'X_Canny'
+            self.canny_max = 3000
 
-            cv.namedWindow(self.window_canny_name, cv.WINDOW_AUTOSIZE)
+            # cv.namedWindow(self.window_canny_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_canny_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_canny_name, 500, 200)
 
             cv.createTrackbar(self.X_canny_name, self.window_canny_name, self.X_canny,
@@ -94,13 +122,18 @@ class TrackBar(object):
 
     class Blur(object):
 
-        def __init__(self):
-            self.window_blur_name = 'Blur'
-            self.blur_max = 100
-            self.blur1 = 1
-            self.blur_1_name = 'blur_1'
+        def __init__(self, preset = None):
 
-            cv.namedWindow(self.window_blur_name, cv.WINDOW_AUTOSIZE)
+            if preset is not None:
+                self.blur1 = preset
+            else:
+                self.blur1 = 1
+            self.window_blur_name = 'Blur'
+            self.blur_1_name = 'blur_1'
+            self.blur_max = 100
+
+            # cv.namedWindow(self.window_blur_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_blur_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_blur_name, 500, 200)
 
             cv.createTrackbar(self.blur_1_name, self.window_blur_name, self.blur1,
@@ -117,15 +150,21 @@ class TrackBar(object):
 
     class GaussianBlur(object):
 
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.blur_x, self.blur_y = preset
+            else:
+
+                self.blur_y = 1
+                self.blur_x = 1
             self.window_blur_name = 'GaussianBlur'
-            self.blur_max = 100
-            self.blur_y = 1
-            self.blur_x = 1
             self.blur_x_name = 'blur x'
             self.blur_y_name = "blur y"
+            self.blur_max = 100
 
-            cv.namedWindow(self.window_blur_name, cv.WINDOW_AUTOSIZE)
+            # cv.namedWindow(self.window_blur_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_blur_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_blur_name, 500, 200)
 
             cv.createTrackbar(self.blur_x_name, self.window_blur_name, self.blur_x,
@@ -149,13 +188,18 @@ class TrackBar(object):
 
     class Sharpen(object):
 
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.sharp = preset
+            else:
+                self.sharp = 1
             self.window_sharp_name = 'sharpen'
             self.sharp_max = 20
-            self.sharp = 1
             self.sharp_1_name = 'sharp_val'
 
-            cv.namedWindow(self.window_sharp_name, cv.WINDOW_AUTOSIZE)
+            # cv.namedWindow(self.window_sharp_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_sharp_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_sharp_name, 500, 200)
 
             cv.createTrackbar(self.sharp_1_name, self.window_sharp_name, self.sharp,
@@ -170,15 +214,20 @@ class TrackBar(object):
             return self.sharp
 
     class HSV(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
             self.max_value = 255
             self.max_value_H = 360 // 2
-            self.low_H = 0
-            self.low_S = 0
-            self.low_V = 56
-            self.high_H = self.max_value_H
-            self.high_S = self.max_value
-            self.high_V = self.max_value
+
+            if preset is not None:
+                self.low_H, self.low_S, self.low_V, self.high_H, self.high_S, self.high_V = preset
+            else:
+                self.low_H = 0
+                self.low_S = 0
+                self.low_V = 56
+                self.high_H = self.max_value_H
+                self.high_S = self.max_value
+                self.high_V = self.max_value
 
             self.window_capture_name = 'Video Capture'
             self.window_detection_name = 'Object Detection'
@@ -249,15 +298,19 @@ class TrackBar(object):
     #     cv.setTrackbarPos(self.binary_th2_name, self.window_binary_name, self.binary_th2)
 
     class HSV1(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
             self.max_value = 255
             self.max_value_H = 360 // 2
-            self.low_H = 0
-            self.low_S = 0
-            self.low_V = 0
-            self.high_H = self.max_value_H
-            self.high_S = self.max_value
-            self.high_V = self.max_value
+            if preset is not None:
+                self.low_H, self.low_S, self.low_V, self.high_H, self.high_S, self.high_V = preset
+            else:
+                self.low_H = 0
+                self.low_S = 0
+                self.low_V = 0
+                self.high_H = self.max_value_H
+                self.high_S = self.max_value
+                self.high_V = self.max_value
 
             self.window_capture_name = 'Video Capture_HSV_1'
             self.window_detection_name = 'Object Detection_1'
@@ -319,14 +372,18 @@ class TrackBar(object):
             return (self.low_H, self.low_S, self.low_V, self.high_H, self.high_S, self.high_V)
 
     class LineDetection(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.line1, self.line2, self.line3, self.line4, self.line5, self.line6 = preset
+            else:
+                self.line1 = 1 # 1 to 10 rho
+                self.line2 = 180  # np.pi/180 theta
+                self.line3 = 1 # 0 to 500 th
+                self.line4 = None
+                self.line5 = 0 # 0 to 100 srn
+                self.line6 = 0 # 0 to 200 stn
             self.window_line_detection_name = 'Line detection'
-            self.line1 = 1 # 1 to 10 rho
-            self.line2 = 180  # np.pi/180 theta
-            self.line3 = 1 # 0 to 500 th
-            self.line4 = None
-            self.line5 = 0 # 0 to 100 srn
-            self.line6 = 0 # 0 to 200 stn
 
             self.max_line1 = 100
             self.max_line3 = 1000
@@ -339,7 +396,8 @@ class TrackBar(object):
             self.line5_name = "srn(def=0)"
             self.line6_name = "stn(def=0)"
 
-            cv.namedWindow(self.window_line_detection_name, cv.WINDOW_AUTOSIZE)
+            # cv.namedWindow(self.window_line_detection_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_line_detection_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_line_detection_name, 500, 200)
 
             cv.createTrackbar(self.line1_name, self.window_line_detection_name, self.line1, self.max_line1,
@@ -380,21 +438,25 @@ class TrackBar(object):
             return (self.line1, self.line2, self.line3, self.line4, self.line5, self.line6)
 
     class CircleDetection(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.circle_param1, self.circle_param2, self.min, self.max = preset
+            else:
+                self.circle_param1 = 1
+                self.circle_param2 = 5
             self.window_circle_det_name = "Circle"
-            self.circle_param1 = 1
-            self.circle_param2 = 5
             self.min = 0
             self.max = 20
-
-            self.max_all = 500
+            self.max_all = 4000
 
             self.circle_param1_name = "param1"
             self.circle_param2_name = "param2"
             self.min_name = "min"
             self.max_name = "max"
 
-            cv.namedWindow(self.window_circle_det_name, cv.WINDOW_AUTOSIZE)
+            # cv.namedWindow(self.window_circle_det_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_circle_det_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_circle_det_name, 500, 200)
 
             cv.createTrackbar(self.circle_param1_name, self.window_circle_det_name, self.circle_param1, self.max_all,
@@ -426,10 +488,14 @@ class TrackBar(object):
             return (self.circle_param1, self.circle_param2, self.min, self.max)
 
     class CircleDetection1(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.circle_param1, self.circle_param2, self.min, self.max = preset
+            else:
+                self.circle_param1 = 1
+                self.circle_param2 = 4
             self.window_circle_det_name = "Circle_1"
-            self.circle_param1 = 1
-            self.circle_param2 = 4
             self.min = 13
             self.max = 65
 
@@ -440,7 +506,8 @@ class TrackBar(object):
             self.min_name = "min"
             self.max_name = "max"
 
-            cv.namedWindow(self.window_circle_det_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_circle_det_name, cv.WINDOW_GUI_NORMAL)
+            # cv.namedWindow(self.window_circle_det_name, cv.WINDOW_AUTOSIZE)
             cv.resizeWindow(self.window_circle_det_name, 500, 200)
 
             cv.createTrackbar(self.circle_param1_name, self.window_circle_det_name, self.circle_param1, self.max_all,
@@ -472,16 +539,21 @@ class TrackBar(object):
             return (self.circle_param1, self.circle_param2, self.min, self.max)
 
     class Dilate(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.kernel_size, self.type_kernel = preset
+            else:
+                self.kernel_size = 5
+                self.type_kernel = 1
             self.window_dilate_det_name = "dilate"
-            self.kernel_size = 5
-            self.type_kernel = 1
             self.max_size = 100
             self.max_type = 7
             self.kernel_name = "kernel_size"
             self.type_name = "ty:1REC,2GRA,3Cro,4DIA,5SQR,6STA,7ELIP"
 
-            cv.namedWindow(self.window_dilate_det_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_dilate_det_name, cv.WINDOW_GUI_NORMAL)
+            # cv.namedWindow(self.window_dilate_det_name, cv.WINDOW_AUTOSIZE)
             cv.resizeWindow(self.window_dilate_det_name, 500, 200)
 
             cv.createTrackbar(self.kernel_name, self.window_dilate_det_name, self.kernel_size, self.max_size,
@@ -501,16 +573,21 @@ class TrackBar(object):
             return (self.kernel_size, self.type_kernel)
 
     class Erode(object):
-        def __init__(self, n_process):
+        def __init__(self,preset = None,  n_process = 1):
+
+            if preset is not None:
+                self.kernel_size, self.type_kernel = preset
+            else:
+                self.kernel_size = 5
+                self.type_kernel = 5
             self.window_erode_det_name = "erode" + str(n_process)
-            self.kernel_size = 5
-            self.type_kernel = 5
             self.max_size = 100
             self.max_type = 20
             self.kernel_name = "kernel_size"
             self.type_name = "ty:1REC,2GRA,3Cro,4DIA,5SQR,6STA,7ELIP"
 
-            cv.namedWindow(self.window_erode_det_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_erode_det_name, cv.WINDOW_GUI_NORMAL)
+            # cv.namedWindow(self.window_erode_det_name, cv.WINDOW_AUTOSIZE)
             cv.resizeWindow(self.window_erode_det_name, 500, 200)
 
             cv.createTrackbar(self.kernel_name, self.window_erode_det_name, self.kernel_size, self.max_size,
@@ -530,11 +607,15 @@ class TrackBar(object):
             return (self.kernel_size, self.type_kernel)
 
     class Sobel(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.kernel_size, self.delta_val, self.scale_val = preset
+            else:
+                self.kernel_size = 5
+                self.delta_val = 1
+                self.scale_val = 1
             self.window_sobel_det_name = "sobel"
-            self.kernel_size = 5
-            self.delta_val = 1
-            self.scale_val = 1
             # self.type_kernel = 5
             self.max_size = 100
             self.max_kernel_size = 31
@@ -543,7 +624,8 @@ class TrackBar(object):
             self.delta_name = "delta_size"
             self.scale_name = "scale"
 
-            cv.namedWindow(self.window_sobel_det_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_sobel_det_name, cv.WINDOW_GUI_NORMAL)
+            # cv.namedWindow(self.window_sobel_det_name, cv.WINDOW_AUTOSIZE)
             cv.resizeWindow(self.window_sobel_det_name, 500, 200)
 
             cv.createTrackbar(self.kernel_name, self.window_sobel_det_name, self.kernel_size, self.max_kernel_size,
@@ -570,16 +652,21 @@ class TrackBar(object):
 
 
     class BarrelDistort(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.offsetcx, self.offsetcy, self.k1, self.k2, self.p1, self.p2, self.focal_length_1, self.focal_length_2 = preset
+            else:
+                self.offsetcx = 500
+                self.offsetcy = 500
+                self.k1 = 50  # negative to remove barrel distortion
+                self.k2 = 50
+                self.p1 = 0
+                self.p2 = 0
+                self.focal_length_1 = 10
+                self.focal_length_2 = 10
+
             self.window_distort_det_name = "Barrel Distortion"
-            self.offsetcx = 500
-            self.offsetcy = 500
-            self.k1 = 50  # negative to remove barrel distortion
-            self.k2 = 50
-            self.p1 = 0
-            self.p2 = 0
-            self.focal_length_1 = 10
-            self.focal_length_2 = 10
             self.offsetcx_name = "Offset Cx"
             self.offsetcy_name = "Offset Cy"
             self.k1_name = "k1"
@@ -592,7 +679,7 @@ class TrackBar(object):
             cv.namedWindow(self.window_distort_det_name, cv.WINDOW_GUI_EXPANDED)
             cv.resizeWindow(self.window_distort_det_name, 500, 200)
 
-            cv.createTrackbar(self.offsetcx_name, self.window_distort_det_name, self.offsetcx, 100,
+            cv.createTrackbar(self.offsetcx_name, self.window_distort_det_name, self.offsetcx, 1000,
                               self.on_offsetcx_size)
 
             cv.createTrackbar(self.offsetcy_name, self.window_distort_det_name, self.offsetcy, 1000,
@@ -651,15 +738,24 @@ class TrackBar(object):
 
 
     class Crop(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.crop_x, self.crop_y = preset
+            else:
+                self.crop_x = 100
+                self.crop_y = 100
+
+
             self.window_crop_det_name = "Crop"
-            self.crop_x = 100
-            self.crop_y = 100
             self.crop_x_name = "X%"
             self.crop_y_name = "Y%"
 
 
+
+
             cv.namedWindow(self.window_crop_det_name, cv.WINDOW_AUTOSIZE)
+            cv.namedWindow(self.window_crop_det_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_crop_det_name, 500, 200)
             cv.createTrackbar(self.crop_x_name, self.window_crop_det_name, self.crop_x, 100,
                               self.on_crop_x_size)
@@ -678,24 +774,28 @@ class TrackBar(object):
             return (self.crop_x, self.crop_y)
 
     class Contour_area(object):
-        def __init__(self):
+        def __init__(self, preset = None):
+
+            if preset is not None:
+                self.area_min, self.area_max, self.n, self.b2s = preset
+            else:
+                self.area_min = 1
+                self.area_max = 200
+                self.n = 5
+                self.b2s = 0
+
             self.window_contour_area_det_name = "Contour Area"
-            self.area_min = 1
-            self.area_max = 200
-            self.n = 5
-            self.n_name = "n contours"
-            self.b2s = 0
             self.b2s_s2b_name = "Big2Small:0 \n Small2Big:1"
             self.area_min_name = "area min"
             self.area_max_name = "area max"
-
+            self.n_name = "n contours"
 
             cv.namedWindow(self.window_contour_area_det_name, cv.WINDOW_GUI_NORMAL)
             cv.resizeWindow(self.window_contour_area_det_name, 500, 200)
-            cv.createTrackbar(self.area_min_name, self.window_contour_area_det_name, self.area_min, 1000000,
+            cv.createTrackbar(self.area_min_name, self.window_contour_area_det_name, self.area_min, 3000000,
                               self.on_min_name_size)
 
-            cv.createTrackbar(self.area_max_name, self.window_contour_area_det_name, self.area_max, 1000000,
+            cv.createTrackbar(self.area_max_name, self.window_contour_area_det_name, self.area_max, 3000000,
                               self.on_max_name_size)
             cv.createTrackbar(self.b2s_s2b_name, self.window_contour_area_det_name, self.b2s, 1,
                               self.on_b2s)
@@ -718,6 +818,7 @@ class TrackBar(object):
         def on_b2s(self, val):
             self.b2s = val
             cv.setTrackbarPos(self.b2s_s2b_name, self.window_contour_area_det_name, self.b2s)
+
         def return_var(self):
             return (self.area_min, self.area_max, self.n, self.b2s)
 

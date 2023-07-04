@@ -3,7 +3,8 @@ import math
 from .trackbar import *
 import cv2 as cv
 from copy import deepcopy
-
+from pathlib import Path
+import json
 
 class Imageprocessing(object):
     global new_width
@@ -11,82 +12,239 @@ class Imageprocessing(object):
     new_width = 662
     new_height = 622
     def __init__(self,opt):
+
+        print("Imageprocessing: opt", opt)
         self.resize_command = opt.basic.resize.lower() in ["true", "1"]
 
+        try:
+            self.params_preset_path = opt.basic.params_temp
+            with Path(self.params_preset_path).open("r") as f:
+                self.params_preset = json.load(f)
+        except:
+            with Path("config/params_default.json").open("r") as f:
+                self.params_preset = json.load(f)
 
         for n,  improc_module in enumerate(opt.basic.process) :
             if improc_module == "sharp":
-                self.var_sharpen = TrackBar.Sharpen()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_sharpen = TrackBar.Sharpen(self.params_preset[improc_module])
             elif improc_module == "blur":
-                self.var_blur = TrackBar.Blur()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_blur = TrackBar.Blur(self.params_preset[improc_module])
 
             elif improc_module == "gaussianblur":
-                self.var_gaussianblur = TrackBar.GaussianBlur()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_gaussianblur = TrackBar.GaussianBlur(self.params_preset[improc_module])
 
             elif improc_module == "thresh":
-                self.var_binary = TrackBar.Binary()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_binary = TrackBar.Binary(self.params_preset[improc_module])
 
             elif improc_module == "line":
-                self.var_line_det = TrackBar.LineDetection()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_line_det = TrackBar.LineDetection(self.params_preset[improc_module])
 
             elif improc_module == "HSV":
-                self.var_HSV_range = TrackBar.HSV()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_HSV_range = TrackBar.HSV(self.params_preset[improc_module])
 
             elif improc_module == "dilate":
-                self.var_dilate = TrackBar.Dilate()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_dilate = TrackBar.Dilate(self.params_preset[improc_module])
 
             elif improc_module == "erode":
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
                 # try:
                 #     print(self.var_erode)
-                self.var_erode = TrackBar.Erode(n)
+                self.var_erode = TrackBar.Erode(self.params_preset[improc_module],n)
                 # except:
                 #     self.var_erode = TrackBar.Erode(n)
 
             elif improc_module == "canny":
-                self.var_canny = TrackBar.Canny()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_canny = TrackBar.Canny(self.params_preset[improc_module])
 
             elif improc_module == "circle":
-                self.var_circle_det = TrackBar.CircleDetection()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_circle_det = TrackBar.CircleDetection(self.params_preset[improc_module])
 
             elif improc_module == "sobel":
-                self.var_sobel = TrackBar.Sobel()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_sobel = TrackBar.Sobel(self.params_preset[improc_module])
 
             elif improc_module == "barrel_distort":
-                self.var_barrel_distort = TrackBar.BarrelDistort()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_barrel_distort = TrackBar.BarrelDistort(self.params_preset[improc_module])
 
             elif improc_module == "crop":
-                self.var_crop = TrackBar.Crop()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_crop = TrackBar.Crop(self.params_preset[improc_module])
 
             elif improc_module == "contour_area":
-                self.var_contour_area = TrackBar.Contour_area()
+                try:
+                    self.params_preset[improc_module]
+                except:
+                    self.params_preset[improc_module] = None
+                self.var_contour_area = TrackBar.Contour_area(self.params_preset[improc_module])
+                # self.var_contour_area = TrackBar.Contour_area()
 
 
 
 
+    def read_params(self, params, frame, print = False):
+        """
+        Function Name: read_params
 
-        #### another state #####
-        # self.var_canny_1 = TrackBar.Canny1()
-        # self.var_circle_det_1 = TrackBar.CircleDetection1()
-        # self.var_HSV_range_1 = TrackBar.HSV1()
+        Description: read all image processing from json file eg. threshold, HSV inrange
+        and put those parameters to process in Imageorocessing()
 
-    def threshold(self, img, show = True):
+        Argument:
+            params [dict] -> [all parameters]
+            frame [array] -> [image for processing]
+
+        Parameters:
+
+        Return:
+            frame [array] -> [image after process]
+
+        Edited by: [12-07-2020] [Pawat]
+        """
+        frame_proc = {}
+        circle = {}
+        line = {}
+        for key in params.keys():
+            if print:
+                print(key)
+            circle = []
+            line = []
+            # frame_result1 = frame.copy()
+            # frame = cv2.resize(frame_result1, (int(frame_result1.shape[1] / self.opt.basic.resize_factor),
+            #                                   int(frame_result1.shape[0] / self.opt.basic.resize_factor)))
+            # frame_result = frame.copy()
+            if key == "HSV":
+                # frame_HSV, params['HSV'] = imgproc.HSV_range(frame, params[key])
+                frame, params['HSV'] = self.imgproc.HSV_range(frame, params[key])
+                frame_proc["HSV"] = frame
+
+            elif key == "erode":
+                # frame_erode, params['erode'] = imgproc.erode(frame, params[key])
+                frame, params['erode'] = self.imgproc.erode(frame, params[key])
+                frame_proc["erode"] = frame
+
+            elif key == "dilate":
+                # frame_dialte, params['dilate'] = imgproc.dilate(frame, params[key])
+                frame, params['dilate'] = self.imgproc.dilate(frame, params[key])
+                frame_proc["dilate"] = frame
+
+            elif key == "thresh":
+                # frame_binary, params['thresh'] = imgproc.threshold(frame, params[key])
+                frame, params['thresh'] = self.imgproc.threshold(frame, params[key])
+                frame_proc["thresh"] = frame
+
+            elif key == "sharp":
+                # frame_sharp, params['sharp'] = imgproc.sharpen(frame, params[key])
+                frame, params['sharp'] = self.imgproc.sharpen(frame, params[key])
+                frame_proc["sharp"] = frame
+
+            elif key == "blur":
+                # frame_blur, params['blur'] = imgproc.blur(frame, params[key])
+                frame, params['blur'] = self.imgproc.blur(frame, params[key])
+                frame_proc["blur"] = frame
+
+            elif key == "gaussianblur":
+                frame, params["gaussianblur"] = self.imgproc.gaussianblur(frame,params[key])
+                frame_proc["gaussianblur"] = frame
+
+            elif key == "line":
+                # frame_line, lines, params['line'] = imgproc.line_detection(frame, frame0, params[key])
+                if len(frame.shape) == 2:
+                    frame0 = cv.cvtColor(frame, cv.COLOR_GRAY2BGR)
+                frame, lines, params['line'] = self.imgproc.line_detection(frame, frame0, params[key])
+                frame_proc["line"] = frame
+
+            elif key == "canny":
+                # frame_canny, params['canny'] = imgproc.canny(frame, params[key], show=True)
+                frame, params['canny'] = self.imgproc.canny(frame, params[key], show=False)
+                frame_proc["canny"] = frame
+
+            elif key == "circle":
+                # frame_circle, circle, params['circle'] = imgproc.circle_detection(frame, frame0, params[key], show=False)
+                if len(frame.shape) == 2:
+                    frame0 = cv.cvtColor(frame, cv.COLOR_GRAY2BGR)
+                frame, circle, params['circle'] = self.imgproc.circle_detection(frame, frame0, params[key], show=False)
+                frame_proc["circle"] = frame
+
+            elif key == "sobel":
+                frame, params["sobel"] = self.imgproc.sobel(frame,params[key],show=False)
+                frame_proc["sobel"] = frame
+
+        frame_proc["final"] = frame
+
+        return frame_proc, circle, line
+
+    def threshold(self, img, params = None,  show = True):
         '''
         Threshold : setting threshold value
         :param img:
         :param show:
         :return:
         '''
+        if params is not None:
+            th_val, is_inv = params
+        else:
+            th_val, is_inv = self.var_binary.return_var()
 
-        th_val = self.var_binary.return_var()
-        if th_val == 0 :
-            flag = cv.THRESH_BINARY+cv.THRESH_OTSU
 
+        if is_inv == 1:
+            flag = cv.THRESH_BINARY_INV
         else:
             flag = cv.THRESH_BINARY
 
+        if th_val == 0 :
+            flag = flag + cv.THRESH_OTSU
+
         if len(img.shape) == 3 :
             img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-
+        # print(flag)
         _, th = cv.threshold(img,th_val, 255, flag)
         if show == True:
             th_vis = deepcopy(th)
@@ -94,7 +252,7 @@ class Imageprocessing(object):
                 th_vis = cv.resize(th_vis, (int(new_width/1.5), int(new_height/1.5)))
             cv.imshow(self.var_binary.window_binary_name, th_vis)
 
-        return th, (th_val)
+        return th, (th_val, is_inv)
 
     def canny(self,img, show = True):
         '''
@@ -347,14 +505,16 @@ class Imageprocessing(object):
 
         if circles is not None:
             circles = np.uint16(np.around(circles))
-            for i in circles[0, :]:
-                center = (i[0], i[1])
+            print(circles)
+            for i, circle in enumerate(circles[0, :]):
+                center = (circle[0], circle[1])
                 # circle center
                 cv.circle(draw_img, center, 1, (0, 100, 100), 3)
                 # circle outline
-                radius = i[2]
+                radius = circle[2]
                 cv.circle(draw_img, center, radius, (255, 0, 255), 3)
-
+                if i > 15:
+                    break
 
         if show == True:
             draw_img = cv.resize(draw_img, (int(new_width/1.5), int(new_height/1.5)))

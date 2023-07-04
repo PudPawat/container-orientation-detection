@@ -11,5 +11,5 @@
   "crop_circle_fix_outer_r": [537, 402, 205],
   "crop_circle_platform": [537, 400, 391],
   "method_names": ["simple", "compare", "comparev2"],
-  "method": ""
+  "method": "simple"
 }

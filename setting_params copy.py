@@ -17,9 +17,9 @@ from utils import listDir, Log, save_json, open_json
 class Set_params():
 
     def __init__(self):
-        self.log = Log("main.py", stream_level="INFO", stream_enable=True, record_level="WARNING",
-                       record_path='log.csv')
-        self.log.show("===== start program =====", "INFO")
+        # self.log = Log("main.py", stream_level="INFO", stream_enable=True, record_level="WARNING",
+        #                record_path='log.csv')
+        # self.log.show("===== start program =====", "INFO")
 
         self.params = {}
         self.rect_params = {}
@@ -33,7 +33,7 @@ class Set_params():
             with Path("./config/main.json").open("r") as f:
                 self.opt = json.load(f)
                 print(self.opt)
-            self.log.show("config/main.json" + " doesn't exist. Please, select the file again!", "ERROR")
+            # self.log.show("config/main.json" + " doesn't exist. Please, select the file again!", "ERROR")
 
         if self.opt != {}:
             self.opt = EasyDict(self.opt)
@@ -83,7 +83,7 @@ class Set_params():
                 frame_canny, params['canny'] = imgproc.canny(frame, show=True)
                 frame = deepcopy(frame_canny)
             elif process == "circle":
-                frame_circle, circle, params['circle'] = imgproc.circle_detection(frame, frame, show=False)
+                frame_circle, circle, params['circle'] = imgproc.circle_detection(frame, frame, show=True)
                 frame = deepcopy(frame_circle)
             elif process == "sobel":
                 frame_sobel, params["sobel"] = imgproc.sobel(frame)
@@ -213,7 +213,11 @@ class Set_params():
 
 
         im_name = listDir(self.opt.basic.source)
-        for name in im_name:
+        # for i, name in enumerate(im_name):
+        i = 0
+        while i < len(im_name):
+            name = im_name[i]
+
             while True:
                 class_name = name.split("_")[0]
                 ## json load
@@ -226,6 +230,8 @@ class Set_params():
                 key = cv.waitKey(0)
                 if key == ord('s') or key == 27:
                     save_json(self.foler_dir, self.name_format,class_name, config)
+                    with open('config/params.json', 'w') as fp:
+                        json.dump(params, fp)
                     print(params)
                 elif key == ord('n'):
                     break
@@ -233,6 +239,11 @@ class Set_params():
                     cv.destroyAllWindows()
                     break
 
+                elif key == ord('r'):
+                    # im_name.insert(i+1, im_name[i-1])
+                    i = i -2
+                    break
+            i += 1
             ## json save
 
         ## setting

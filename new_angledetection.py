@@ -14,9 +14,14 @@ from lib_save.read_params import *
 from lib.compare_img_module import FeatureVisualizationModule
 from utils import crop_circle, rotate_image, crop_circle_by_warp, fill_balck_circle
 
-### mac 
-import faulthandler
-faulthandler.enable()
+### simple_tiny
+from lib.custom_circle_detection import fit_circle_2d, get_x_y_from_contour
+try:
+    ### mac 
+    import faulthandler
+    faulthandler.enable()
+except:
+    pass
 
 
 def resize_scale(img, scale = 0.3):
@@ -46,9 +51,11 @@ class OrientationDetectionv2():
         self.resize_ratio = self.opt.resize_ratio
         self.threshold = self.opt.inverse_threshold.lower() in ("yes", "true", "t", "1")
         self.n_symetric = self.opt.n_symetric
+        self.method = self.opt.method
         self.read = read_save()
         self.path_ref = path_ref
         self.ref_names = os.listdir(self.path_ref)
+
         print(self.ref_names)
 
         self.FeatureCompare = FeatureVisualizationModule()
@@ -76,6 +83,7 @@ class OrientationDetectionv2():
         result, _, _ = self.read.read_params(self.params,img)
         img_result = result["final"]
         cv2.imshow("result",img_result)
+        cv2.imwrite("debug_imgs/result.jpg", img_result)
         img_result = cv2.resize(img_result, (int(img.shape[1] * self.resize_ratio), int(img.shape[0] * self.resize_ratio)))
         cv2.waitKey(0)
         img_linear_crop = self.crop_roi(img_result)
@@ -88,6 +96,7 @@ class OrientationDetectionv2():
         :return:
         '''
         img, warp = warp_polar(img, self.circle_outer_r)
+        print(img.shape, warp.shape)
         img_linear_crop = warp[0: warp.shape[0], int(self.circle_inner_r[-1]):warp.shape[1]]
         if self.debug:
             cv2.imshow("warp_outer", warp)
@@ -189,7 +198,7 @@ class OrientationDetectionv2():
 
     def main_simple(self,img, class_name):
         '''
-
+        process (CV algorithm HSV, dilate, etc) > warp polar (linear_process) > contour >
         :param img:
         :return:
         '''
@@ -215,6 +224,7 @@ class OrientationDetectionv2():
             cv2.putText(result, str(angle),(0, img_crop_platform.shape[0]),cv2.FONT_HERSHEY_COMPLEX,3,(255,0,0),2)
             print(angle)
             cv2.imshow("result_1",result)
+            cv2.imwrite("debug_imgs/result.jpg",result)
             if self.debug:
                 for _,_, contour in area_contours:
                     cv2.drawContours(linear_bi_img_BGR,[contour],-1, (255,0,0),3)
@@ -227,7 +237,70 @@ class OrientationDetectionv2():
                     self.process_order +=1
         cv2.waitKey(0)
 
+    def main_simple_for_tiny(self,img, class_name):
+        '''
 
+        :param img:
+        :return:
+        '''
+
+        img_crop_platform = crop_circle(img, self.crop_circle_platform)
+        result = deepcopy(img_crop_platform)
+
+        result_proc, _, _ = self.read.read_params(self.params, img)
+        img_result = result_proc["final"]
+        if self.debug:
+            cv2.imshow("img_result", img_result)
+            if self.save_img:
+                for key in result_proc.keys():
+                    cv2.imwrite("debug_imgs/{}_{}result_proc.jpg".format(class_name+str(key), self.process_order), result_proc[key])
+
+                cv2.imwrite("debug_imgs/{}_{}result_proc.jpg".format(class_name, self.process_order), img_result)
+                self.process_order += 1
+
+        a_contour = contour_big2small_n_order(img_result, 1)
+        x,y = get_x_y_from_contour(a_contour[0][2])
+        xc, yc, r, loss = fit_circle_2d(x,y)
+
+        ### remove noise
+        try:
+            r = r - abs(self.opt["simple_tiny"]["outer_r_safety"])
+        except:
+            r = r - 5
+
+
+        img, linear_bi_img = warp_polar(img_result, (xc, yc, r))
+        if self.threshold:
+            _, linear_bi_img = cv2.threshold(linear_bi_img, 0, 255, cv2.THRESH_BINARY_INV)
+
+        cv2.imshow("test", linear_bi_img)
+        cv2.waitKey(0)
+        area_contours = contour_big2small_n_order(linear_bi_img, 3)
+
+        if len(area_contours) != 0:
+            ### detect 1st biggest contour
+            area, center, _ = area_contours[0]
+            length360 = linear_bi_img.shape[0]
+            angle = abs(center[1] )/length360 * 360
+            print(angle)
+            # if angle > 360/self.n_symetric:
+            while (angle > 360/self.n_symetric):
+                angle = angle - (360/self.n_symetric)
+            cv2.putText(result, str(angle),(0, img_crop_platform.shape[0]),cv2.FONT_HERSHEY_COMPLEX,3,(255,0,0),2)
+            print(angle)
+            cv2.imshow("result_1",result)
+            if self.debug:
+                if len(linear_bi_img.shape) == 2:
+                    linear_bi_img_BGR = cv2.cvtColor(linear_bi_img, cv2.COLOR_GRAY2BGR)
+                for _,_, contour in area_contours:
+                    cv2.drawContours(linear_bi_img_BGR,[contour],-1, (255,0,0),3)
+                cv2.imshow("contour", linear_bi_img_BGR)
+                cv2.waitKey(0)
+                if self.save_img:
+                    cv2.imwrite("debug_imgs/{}_{}contour.jpg".format(class_name,self.process_order), linear_bi_img_BGR)
+                    cv2.imwrite("debug_imgs/{}_{}result_img_crop_platform.jpg".format(class_name,self.process_order), img_crop_platform)
+                    cv2.imwrite("debug_imgs/{}_{}result.jpg".format(class_name,self.process_order), result)
+                    self.process_order +=1
 
     def main_compare(self,img, class_name):
         '''
@@ -387,7 +460,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230318"
+    path_imgs = "dataset/20230423"
     names = os.listdir(path_imgs)
 
     for name in names:
@@ -396,8 +469,17 @@ if __name__ == '__main__':
         img = cv2.imread(img_path)
 
         class_name = name.split("_")[0]
-        detect = OrientationDetectionv2("dataset/20230318",json_path = "config/notchv2_config_{}.json".format(class_name))
-        # detect.main_compare(img, class_name)
-        detect.main_simple(img, class_name)
-        # detect.main_compare1(img, class_nam         detect.main_compare_with_process(img, class_name)
+        detect = OrientationDetectionv2(path_imgs,json_path = "config/notchv2_config_{}.json".format(class_name))
+
+        if detect.method == "tiny":
+            detect.main_simple_for_tiny(img, class_name)
+        elif detect.method == "simple":
+            detect.main_simple(img, class_name)
+        elif detect.method == "compare":
+            detect.main_compare(img, class_name)
+        elif detect.method == "compare1":
+            detect.main_compare1(img, class_name)
+        else:
+            print("No method selected")
+        # detect.main_compare_with_process(img, class_name)
         # cv2.waitKey(0)

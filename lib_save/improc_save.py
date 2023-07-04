@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import math
+from copy import deepcopy
 # from lib.trackbar import *
 
 
@@ -100,39 +101,36 @@ class Imageprocessing(object):
 
         return frame_proc, circle, line
 
-    def threshold(self, img, params, show = False):
-        """
-        Function Name: threshold
-        
-        Description: setting threshold value
-        
-        Argument:
-            img [array] -> [image for thresholding]
-            params [tuple] -> [all need params]
-        
-        Parameters:
-        
-        Return:
-            img[array] -> [thresholded image]
-            params[tuple] -> (th_val)
-        
-        Edited by: [12-4-2020] [Pawat]
-        """        
-        th_val = params
-        if th_val == 0 :
-            flag = cv.THRESH_BINARY+cv.THRESH_OTSU
+    def threshold(self, img, params,  show=False):
+        '''
+        Threshold : setting threshold value
+        :param img:
+        :param show:
+        :return:
+        '''
 
+        th_val, is_inv = params
+        if is_inv == 1:
+            flag = cv.THRESH_BINARY_INV
         else:
             flag = cv.THRESH_BINARY
 
-        if len(img.shape) == 3 :
+        if th_val == 0:
+            flag = flag + cv.THRESH_OTSU
+
+        if len(img.shape) == 3:
             img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-
-        _, th = cv.threshold(img,th_val, 255, flag)
+        # print(flag)
+        _, th = cv.threshold(img, th_val, 255, flag)
         if show == True:
-            cv.imshow("window_thresh", th)
+            th_vis = deepcopy(th)
+            # if self.resize_command:
+            #     th_vis = cv.resize(th_vis, (int(new_width / 1.5), int(new_height / 1.5)))
+            cv.imshow("window_thresh", th_vis)
 
-        return th, (th_val)
+            # cv.imshow(self.var_binary.window_binary_name, th_vis)
+
+        return th, (th_val, is_inv)
 
     def canny(self, img, params, show = False):
         """
@@ -654,8 +652,8 @@ class Imageprocessing(object):
         # assume unit matrix for camera
         cam = np.eye(3, dtype=np.float32)
 
-        cam[0, 2] = (width / 2.0)+(offsetcx-50)  # define center x
-        cam[1, 2] = (height / 2.0)+(offsetcy-50)  # define center y
+        cam[0, 2] = (width / 2.0)+(offsetcx-500)  # define center x
+        cam[1, 2] = (height / 2.0)+(offsetcy-500)  # define center y
         cam[0, 0] = focal_length_1  # define focal length x
         cam[1, 1] = focal_length_2  # define focal length y
 
