@@ -1,4 +1,6 @@
 import os
+
+import cv2
 import numpy as np
 import random
 
@@ -294,6 +296,7 @@ class OrientationDetectionv2():
                     linear_bi_img_BGR = cv2.cvtColor(linear_bi_img, cv2.COLOR_GRAY2BGR)
                 for _,_, contour in area_contours:
                     cv2.drawContours(linear_bi_img_BGR,[contour],-1, (255,0,0),3)
+                cv2.namedWindow("contour", cv2.WINDOW_NORMAL)
                 cv2.imshow("contour", linear_bi_img_BGR)
                 cv2.waitKey(0)
                 if self.save_img:
@@ -460,7 +463,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230423"
+    path_imgs = "dataset/tiny"
     names = os.listdir(path_imgs)
 
     for name in names:
