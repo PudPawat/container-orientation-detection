@@ -264,27 +264,39 @@ class OrientationDetectionv2():
         x,y = get_x_y_from_contour(a_contour[0][2])
         xc, yc, r, loss = fit_circle_2d(x,y)
 
+
         ### remove noise
         try:
             r = r - abs(self.opt["simple_tiny"]["outer_r_safety"])
         except:
             r = r - 5
 
-
+        cv2.circle(img,(int(xc),int(yc)),int(r),(255,255,0),5)
+        cv2.imshow("test_circle",img)
         img, linear_bi_img = warp_polar(img_result, (xc, yc, r))
+        another_linear = deepcopy(linear_bi_img)
+        flip_another = cv2.flip(another_linear,0)
+        print(flip_another.shape)
+        double_y_linear = np.concatenate((linear_bi_img, flip_another), axis=0)
+        print(double_y_linear.shape)
+
         if self.threshold:
-            _, linear_bi_img = cv2.threshold(linear_bi_img, 0, 255, cv2.THRESH_BINARY_INV)
+            _, double_y_linear = cv2.threshold(double_y_linear, 0, 255, cv2.THRESH_BINARY_INV)
 
         cv2.imshow("test", linear_bi_img)
         cv2.waitKey(0)
-        area_contours = contour_big2small_n_order(linear_bi_img, 3)
+        area_contours = contour_big2small_n_order(double_y_linear, 3)
 
         if len(area_contours) != 0:
             ### detect 1st biggest contour
             area, center, _ = area_contours[0]
             length360 = linear_bi_img.shape[0]
+            print("len y:", length360)
+            print(center)
             angle = abs(center[1] )/length360 * 360
             print(angle)
+            if angle > 360:
+                angle =  abs(720 - angle)
             # if angle > 360/self.n_symetric:
             while (angle > 360/self.n_symetric):
                 angle = angle - (360/self.n_symetric)
@@ -293,7 +305,7 @@ class OrientationDetectionv2():
             cv2.imshow("result_1",result)
             if self.debug:
                 if len(linear_bi_img.shape) == 2:
-                    linear_bi_img_BGR = cv2.cvtColor(linear_bi_img, cv2.COLOR_GRAY2BGR)
+                    linear_bi_img_BGR = cv2.cvtColor(double_y_linear, cv2.COLOR_GRAY2BGR)
                 for _,_, contour in area_contours:
                     cv2.drawContours(linear_bi_img_BGR,[contour],-1, (255,0,0),3)
                 cv2.namedWindow("contour", cv2.WINDOW_NORMAL)
@@ -463,7 +475,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/tiny"
+    path_imgs = "dataset/20230811"
     names = os.listdir(path_imgs)
 
     for name in names:
