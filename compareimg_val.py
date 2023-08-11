@@ -122,6 +122,7 @@ class FeatureVisualization():
                 json_data = file.read()
             # Parse the JSON data into a dictionary
             self.names_result = json.loads(json_data)
+            self.names_ref = list(self.names_result.keys())
             print("READ feature file successfully ")
 
 
@@ -302,6 +303,8 @@ class FeatureVisualization():
 
         result_array = np.asarray(result)
         ind = np.argmin(result_array)
+        print(self.names_ref)
+        print(ind)
         try:
             class_obj = self.names_ref[ind].split("_")[0]
         except:
@@ -317,14 +320,65 @@ class FeatureVisualization():
         return class_obj
 
 
+    def get_similar_n_img(self, img1, metric = "", get_n_imge = 5):
+        '''
+        to get similar image
+        :param img1:
+        :return:
+        '''
+        if self.debug:
+            cv2.putText(img1, "INPUT", (0, img1.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 3, (200, 200, 0), 3)
+            cv2.imshow("1", img1)
+        # imgasvar = self.preprocess_image(img1)
+        outputs1 = self.get_fc_feature(img1)
+        # print("outputs1", outputs1)
+        self.plot_probablity(outputs1)
+        # print("outputs1", outputs1)
+        result = []
+        for j, name in enumerate(self.names_result.keys()):
+            dis = self.compare_cosine(outputs1, self.names_result[name],metric = metric)
+            result.append(dis[0])
+            dis_all = self.compare_cosine(outputs1, self.names_result[name],metric = metric )
+            print(name, "dis_all: ", dis_all)
+
+        result_array = np.asarray(result)
+
+        n_result = []
+        n_ind_result = []
+
+        for n_result_index in range(get_n_imge):
+
+            ind = np.argmin(result_array)
+            n_ind_result.append(ind)
+
+            try:
+                n_result.append(self.names_ref[ind].split("_")[0])
+            except:
+                n_result.append(self.names_ref[ind])
+
+            result_array[ind] = 999
+
+        print("The class is {}".format(n_result[-1]))
+        # print(os.path.join(self.folder_ref, self.names_ref[ind]))
+        answer = cv2.imread(os.path.join(self.folder_ref, self.names_ref[n_ind_result[0]]))
+        if self.debug:
+            cv2.putText(answer, "ANSWER {}".format(str(n_result[-1])), (0, answer.shape[0] - 10), cv2.FONT_HERSHEY_COMPLEX, 3.5, (50, 0, 200), 3)
+            cv2.imshow("answer_class", answer)
+            cv2.waitKey(0)
+
+        return n_result
+
+
 
 if __name__ == '__main__':
     folder = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\image\Darker - Exposure time 120000us close some ambient light"
-    folder = "dataset\class_registeration"
     folder = "F:\Ph.D\circle_classification\Images_all_class\\0_all_class"
+    folder = "dataset\class_registeration"
+    folder = "dataset\\20230311"
     folder_ref = "F:\Pawat\Projects\Imageprocessing_Vistools\data\container\\light2_class"
-    folder_ref = "dataset\class_registeration"
     folder_ref = "F:\Ph.D\circle_classification\Images_all_class\\0_all_class_aug"
+    folder_ref = "dataset\class_registeration"
+    folder_ref = "dataset\\20230311"
 
     names = os.listdir(folder)
     names_ref = os.listdir(folder_ref)
@@ -356,24 +410,32 @@ if __name__ == '__main__':
             img1 = preprocess(img1, featureVis.circle_platfrom)
             # img1 = preprocess(img1, orientation_detection_A.crop_circle_platform)
             # img1 = cv2.rotate(img1,cv2.ROTATE_90_COUNTERCLOCKWISE)
-
             name_class = featureVis.get_similar_img(img1, metric= metric)
-
+            name_classes = featureVis.get_similar_n_img(img1, metric =  metric , get_n_imge=5)
+            print(name_classes)
             if name_class in names[i]:
                 val_result.append(True)
             else:
                 val_result.append(False)
-
-
             all_result.append(result)
-
         count_true = val_result.count(True)
-
         acc = (count_true/ len(val_result)) *100
-
         print(str(acc) + "% accuracy")
-
         return  acc
+
+    def test_an_image(img, model = None):
+
+        fea_path = f"config/features_result_{model}.json"
+        featureVis = FeatureVisualization(model = model, features_path= fea_path)
+
+        if type(img) == "String":
+            img1 = cv2.imread(img)
+        else:
+            img1 = img
+        img1 = preprocess(img1, featureVis.circle_platfrom)
+        name_classes = featureVis.get_similar_n_img(img1, metric=metric, get_n_imge= 5)
+
+        print(name_classes)
 
     modelnames = ["mobilenet_v2", "densenet121", "densenet121", "densenet201", "resnext50_32x4d",
                        "vgg19", "alexnet", "squeezenet1_1", "mnasnet1_0"]

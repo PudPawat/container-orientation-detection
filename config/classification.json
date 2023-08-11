@@ -1,6 +1,6 @@
 {
-  "folder_ref": "F:\\Ph.D\\circle_classification\\Images_all_class\\0_all_class_aug",
-  "folder_ref1": "dataset\\class_registeration",
+  "folder_ref1": "F:\\Ph.D\\circle_classification\\Images_all_class\\0_all_class_aug",
+  "folder_ref": "dataset\\class_registeration",
   "debug": "False",
   "crop_circle": "True",
   "crop_circle_platform": [546.1550518881522, 421.04824877486305, 300],
