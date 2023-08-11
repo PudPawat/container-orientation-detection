@@ -149,8 +149,8 @@ class FeatureVisualization():
 
                 img2 = preprocess(img2, self.circle_platfrom, resize_ratio= 0.3)
 
-            cv2.imshow("see_crop", img2)
-            key = cv2.waitKey(int(key))
+            # cv2.imshow("see_crop", img2)
+            # key = cv2.waitKey(int(key))
             # print("0")
             # imgasvar = featureVis.preprocess_image(img2)
             self.set_index(j)
@@ -382,21 +382,31 @@ if __name__ == '__main__':
         'kulsinski', 'mahalanobis', 'matching', 'minkowski', 'rogerstanimoto',
         'russellrao', 'seuclidean', 'sokalmichener', 'sokalsneath',
         'sqeuclidean', 'wminkowski', 'yule'.'''
-    metric = "euclidean"
+    metric = "cosine"
+    metrics = ["cosine", "euclidean",'sqeuclidean','seuclidean','matching']
 
     model_result = {}
     featureVis = FeatureVisualization(features_path="config/features_result.json")
     model_result["dataset"] = featureVis.folder_ref
-    for modelname in modelnames:
-        print("model: ", modelname)
-        acc = test_model_and_acc(model = modelname, metric = metric)
-        model_result[modelname] = acc
-
-        print(model_result)
 
 
+    with open("config/classification.json", "r") as file:
+        json_data_classification = file.read()
+    model_result["config"] = json.loads(json_data_classification)
 
-    with open(f"model_result_{metric}.json", "w") as file:
-        json.dump(model_result, file)
-    print("READ feature file successfully ")
+
+    print(model_result)
+    for metric in metrics:
+        for modelname in modelnames:
+            print("model: ", modelname)
+            acc = test_model_and_acc(model = modelname, metric = metric)
+            model_result[modelname] = acc
+
+            print(model_result)
+
+
+
+        with open(f"model_result_{metric}.json", "w") as file:
+            json.dump(model_result, file)
+        print("READ feature file successfully ")
 

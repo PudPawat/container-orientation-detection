@@ -1,0 +1,28 @@
+{
+  "dataset": "F:\\Ph.D\\circle_classification\\Images_all_class\\0_all_class_aug",
+  "config": {
+    "folder_ref": "F:\\Ph.D\\circle_classification\\Images_all_class\\0_all_class_aug",
+    "folder_ref1": "dataset\\class_registeration",
+    "debug": "False",
+    "crop_circle": "True",
+    "crop_circle_platform": [
+      546.1550518881522,
+      421.04824877486305,
+      250
+    ],
+    "crop_circle_platform_original": [
+      546.1550518881522,
+      421.04824877486305,
+      375
+    ],
+    "resize_ratio": 0.3
+  },
+  "mobilenet_v2": 77.08333333333334,
+  "densenet121": 79.16666666666666,
+  "densenet201": 86.45833333333334,
+  "resnext50_32x4d": 76.04166666666666,
+  "vgg19": 71.875,
+  "alexnet": 62.5,
+  "squeezenet1_1": 63.541666666666664,
+  "mnasnet1_0": 82.29166666666666
+}

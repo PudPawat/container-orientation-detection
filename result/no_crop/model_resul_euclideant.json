@@ -1,8 +1,8 @@
 {
   "dataset": "F:\\Ph.D\\circle_classification\\Images_all_class\\0_all_class_aug",
-  "mobilenet_v2": 66.66666666666666,
-  "densenet121": 59.375,
-  "densenet201": 87.5,
+  "mobilenet_v2": 76.06666666666666,
+  "densenet121": 79.166666666666,
+  "densenet201": 68.75,
   "resnext50_32x4d": 75.0,
   "vgg19": 58.333333333333336,
   "alexnet": 70.83333333333334,
