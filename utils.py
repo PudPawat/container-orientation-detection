@@ -9,10 +9,14 @@ def save_json(folder_dir, name_format, model_id, dict_to_save):
         json.dump(dict_to_save, openfile)
 
 def open_json(folder_dir, name_format, model_id):
+    print("model_id",model_id)
     try:
+        print("open: "+os.path.join(folder_dir,name_format+model_id+".json"))
         with open(os.path.join(folder_dir,name_format+model_id+".json") , 'r') as openfile:
             config = json.load( openfile)
-    except:
+    except Exception as e:
+        print(e)
+        print("open default instead" + folder_dir,name_format+"default"+".json")
         with open(os.path.join(folder_dir,name_format+"default"+".json") , 'r') as openfile:
             config = json.load( openfile)
     return  config

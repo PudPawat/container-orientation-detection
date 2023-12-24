@@ -111,7 +111,7 @@ if __name__ == '__main__':
     circle = None
     circles = []
     # path = "F:\Ph.D\circle_classification\container-orientation-detection\dataset\\new_0219\\"
-    path = "./dataset/20230423"
+    path = "F:\Ph.D\contactlens\contact_lens_project\data\\new company1\\burr\FOV1"
     
     # path = "./dataset/distort"
     names = os.listdir(path)

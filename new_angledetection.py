@@ -25,7 +25,7 @@ try:
 except:
     pass
 
-
+print("start")
 def resize_scale(img, scale = 0.3):
     resize = cv2.resize(img,(int(img.shape[1]*scale),int(img.shape[0]*scale)))
     return resize
@@ -267,7 +267,7 @@ class OrientationDetectionv2():
 
         ### remove noise
         try:
-            r = r - abs(self.opt["simple_tiny"]["outer_r_safety"])
+            r = r + self.opt["simple_tiny"]["outer_r_safety"]
         except:
             r = r - 5
 
@@ -475,7 +475,7 @@ class OrientationDetectionv2():
 
 
 if __name__ == '__main__':
-    path_imgs = "dataset/20230811"
+    path_imgs = "dataset/20230912"
     names = os.listdir(path_imgs)
 
     for name in names:

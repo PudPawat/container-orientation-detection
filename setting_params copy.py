@@ -217,9 +217,17 @@ class Set_params():
         i = 0
         while i < len(im_name):
             name = im_name[i]
+            class_name = name.split("_")[0]
+            # default_preset = self.opt.basic.params_temp
+            # try:
+            #     self.opt.basic.params_temp = os.path.join(self.foler_dir,self.name_format+class_name+".json")
+            # except Exception as e:
+            #     print(e)
+            #     self.opt.basic.params_temp = default_preset
+            # imgproc = Imageprocessing(self.opt)
 
             while True:
-                class_name = name.split("_")[0]
+
                 ## json load
                 config = open_json(self.foler_dir, self.name_format,class_name)
 
@@ -227,6 +235,7 @@ class Set_params():
                 frame = cv2.imread(os.path.join(self.opt.basic.source, name))
                 frame_result, params = self.process(frame, imgproc)
                 config["params"] = params
+                print()
                 key = cv.waitKey(0)
                 if key == ord('s') or key == 27:
                     save_json(self.foler_dir, self.name_format,class_name, config)
